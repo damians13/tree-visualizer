@@ -1,20 +1,34 @@
-import React, { useEffect, useState } from "react"
+import React, { useState } from "react"
+
+const INITIAL_OFFSET_WIDTH = 80
+const INITIAL_OFFSET_HEIGHT = 40
+const SCALING_FACTOR = 2
+
+const id1 = Math.random()
+const id2 = Math.random()
+const id3 = Math.random()
 
 const exampleBSTInArray = [
 	{
 		value: 6,
-		id: Math.random(),
+		id: id1,
 		children: [
-			{ value: 5, id: Math.random(), children: [{ value: 1, id: Math.random(), children: [] }] },
+			{ value: 5, id: id2, children: [{ value: 1, id: Math.random(), children: [], parentID: id2, topOffset: 120, leftOffset: 80 }], parentID: id1, topOffset: 80, leftOffset: 120 },
 			{
 				value: 8,
-				id: Math.random(),
+				id: id3,
 				children: [
-					{ value: 7, id: Math.random(), children: [] },
-					{ value: 9, id: Math.random(), children: [] },
+					{ value: 7, id: Math.random(), children: [], parentID: id3, topOffset: 120, leftOffset: 240 },
+					{ value: 9, id: Math.random(), children: [], parentID: id3, topOffset: 120, leftOffset: 320 },
 				],
+				parentID: id1,
+				topOffset: 80,
+				leftOffset: 280
 			},
 		],
+		parentID: null,
+		topOffset: 40,
+		leftOffset: 200
 	},
 ]
 
@@ -26,50 +40,36 @@ const searchNodesAndRemoveById = (nodes, id) => {
 			value: node.value,
 			id: node.id,
 			children: searchNodesAndRemoveById(node.children, id),
+			parentID: node.parentID,
+			topOffset: node.topOffset,
+			leftOffset: node.leftOffset
 		})
 	})
 	return ret
 }
 
-/**
- * Determines the horizontal offset of each node in a given binary tree
- * @param {Object} node - is the first node of the binary tree
- * @param {Number} node.id - the ID of the node
- * @param {Number} offset is the offset of the node, 0 for initial call
- * @param {Number} depth is how far down the current node is in the tree, 0 for initial call
- * @return {Array} An array of objects with corresponding node IDs and horizontal offsets
- */
-export const determineXOffsetBT = (node, offset = 0, depth = 0) => {
-	if (node === undefined) return []
-
-	const INITIAL_OFFSET_WIDTH = 80
-	const SCALING_FACTOR = 2
-
-	const offsetChange = INITIAL_OFFSET_WIDTH / SCALING_FACTOR ** depth
-
-	return [
-		{
-			value: node.value, // For debug
-			id: node.id,
-			offset: offset,
-		},
-		...determineXOffsetBT(node.children[0], offset - offsetChange, depth + 1),
-		...determineXOffsetBT(node.children[1], offset + offsetChange, depth + 1),
-	]
-}
-
-export const bstInsert = (node, value) => {
-	const newNode = { value: value, id: Math.random(), children: [] }
+export const bstInsert = (node, value, parentID=null, depth=0) => {
+	const newNode = { value: value, id: Math.random(), children: [], parentID: parentID, topOffset: node.topOffset + 40, leftOffset: node.leftOffset }
 
 	// Check for duplicate
 	if (value === node.value) return node
 
 	// Node has no children
 	if (node.children.length === 0) {
+		newNode.parentID = node.id
+		if (value > node.value) {
+			newNode.leftOffset = node.leftOffset + INITIAL_OFFSET_WIDTH / SCALING_FACTOR ** depth
+		} else {
+			newNode.leftOffset = node.leftOffset - INITIAL_OFFSET_WIDTH / SCALING_FACTOR ** depth
+		}
+		newNode.topOffset = node.topOffset + INITIAL_OFFSET_HEIGHT
 		return {
 			value: node.value,
 			id: node.id,
 			children: [newNode],
+			parentID: node.parentID,
+			topOffset: node.topOffset,
+			leftOffset: node.leftOffset
 		}
 	}
 
@@ -79,25 +79,40 @@ export const bstInsert = (node, value) => {
 
 		// Insert to right on this node
 		if (child.value < node.value && node.value < value) {
+			newNode.parentID = node.id
+			newNode.leftOffset = node.leftOffset + INITIAL_OFFSET_WIDTH / SCALING_FACTOR ** depth
+			newNode.topOffset = node.topOffset + INITIAL_OFFSET_HEIGHT
 			return {
 				value: node.value,
 				id: node.id,
 				children: [child, newNode],
+				parentID: node.parentID,
+				topOffset: node.topOffset,
+				leftOffset: node.leftOffset
 			}
 		}
 		// Insert to left on this node
 		else if (value < node.value && node.value < child.value) {
+			newNode.parentID = node.id
+			newNode.leftOffset = node.leftOffset - INITIAL_OFFSET_WIDTH / SCALING_FACTOR ** depth
+			newNode.topOffset = node.topOffset + INITIAL_OFFSET_HEIGHT
 			return {
 				value: node.value,
 				id: node.id,
 				children: [newNode, child],
+				parentID: node.parentID,
+				topOffset: node.topOffset,
+				leftOffset: node.leftOffset
 			}
 		}
 		// Insert on child node
 		return {
 			value: node.value,
 			id: node.id,
-			children: [bstInsert(child, value)],
+			children: [bstInsert(child, value, node.id, depth + 1)],
+			parentID: node.parentID,
+			topOffset: node.topOffset,
+			leftOffset: node.leftOffset
 		}
 	}
 
@@ -111,7 +126,10 @@ export const bstInsert = (node, value) => {
 			return {
 				value: node.value,
 				id: node.id,
-				children: [firstChild, bstInsert(secondChild, value)],
+				children: [firstChild, bstInsert(secondChild, value, node.id, depth + 1)],
+				parentID: node.parentID,
+				topOffset: node.topOffset,
+				leftOffset: node.leftOffset
 			}
 		}
 
@@ -120,7 +138,10 @@ export const bstInsert = (node, value) => {
 			return {
 				value: node.value,
 				id: node.id,
-				children: [bstInsert(firstChild, value), secondChild],
+				children: [bstInsert(firstChild, value, node.id, depth + 1), secondChild],
+				parentID: node.parentID,
+				topOffset: node.topOffset,
+				leftOffset: node.leftOffset
 			}
 		}
 	}
@@ -132,13 +153,21 @@ export const bstInsert = (node, value) => {
 	}
 }
 
+/**
+ * Flattens the tree from the given node
+ * @param {Object} node 
+ * @returns an array containing every node in the tree in one dimension
+ */
+const flattenTree = node => {
+	return [node, ...node.children.reduce((rsf, child) => [...rsf, ...flattenTree(child)], [])]
+}
+
 const Tree = props => {
 	const [viewMode, setViewMode] = useState("bst")
 	const [inputText, setInputText] = useState("")
 	const [nodes, setNodes] = useState(exampleBSTInArray)
 	const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 })
-	const [numericOnly, setNumericOnly] = useState(true)
-	const [offsets, setOffsets] = useState([])
+	const [dragCoordinates, setDragCoordinates] = useState({ x: 0, y: 0 })
 
 	const handleViewModeChange = e => {
 		setViewMode(e.target.value)
@@ -158,14 +187,18 @@ const Tree = props => {
 		// Update the tree nodes and clear the input
 		if (viewMode === "bst") {
 			if (nodes.length > 0) setNodes([bstInsert(nodes[0], +inputText)])
-			else
+			else {
 				setNodes([
 					{
 						value: +inputText,
 						id: Math.random(),
 						children: [],
+						parentID: null,
+						topOffset: 40,
+						leftOffset: 200
 					},
 				])
+			}
 		}
 		setInputText("")
 	}
@@ -180,34 +213,14 @@ const Tree = props => {
 	const handleDrag = e => {
 		// This if statement filters out the last drag event which has coordinates (0, 0)
 		if (!(e.clientX === 0 && e.clientY === 0)) {
-			e.target.style.left = e.pageX - dragOffset.x + "px"
-			e.target.style.top = e.pageY - dragOffset.y - 16 + "px"
+			const flattenedTree = flattenTree(nodes[0])
+			const nodeObj = flattenedTree.find(node => node.id === +e.target.id)
+			nodeObj.topOffset = e.pageY - dragOffset.y - 16
+			nodeObj.leftOffset = e.pageX - dragOffset.x
 		}
+
+		setDragCoordinates({ x: e.clientX, y: e.clientY })
 	}
-
-	// Check if the nodes are numeric only whenever they are updated
-	useEffect(() => {
-		// TODO: Redo this with the new node model
-
-		const numericOnlyViewModes = ["bst"]
-		const willBeNumericOnly = nodes.reduce((rsf, value) => rsf && !isNaN(+value), true)
-
-		// Switch view mode if necessary
-		if (numericOnly && !willBeNumericOnly && numericOnlyViewModes.reduce((rsf, value) => rsf || value === viewMode, false)) {
-			//setViewMode("custom") // change this to highlight the viewmodel in red, disable the insert and search buttons, and provide a tooltop
-			//document.getElementsByName("treeMode")[0].animate([{ color: "red" }, { color: "black" }], { duration: 1000 })
-		}
-
-		// Update whether the tree is entirely numeric or not
-		setNumericOnly(willBeNumericOnly)
-
-		if (viewMode === "bst") setOffsets(determineXOffsetBT(nodes[0], +document.getElementById(nodes[0].id).style.left.split("px")[0]))
-
-		// eslint-disable-next-line
-	}, [nodes])
-	useEffect(() => {
-		console.log(offsets)
-	}, [offsets])
 
 	return (
 		<div id="tree">
@@ -229,9 +242,6 @@ const Tree = props => {
 						onDragStart={handleDragStart}
 						for={value}
 						row={1}
-						leftOffset={offsets.reduce((rsf, pair) => (pair.id === value.id ? pair.offset : rsf), undefined)}
-						nodes={nodes}
-						offsets={offsets}
 						key={value.value}
 					/>
 				))}
@@ -240,20 +250,18 @@ const Tree = props => {
 	)
 }
 
-// TODO: Remove the determineXOffsetBT() function and move the functionality into the Node function, cleanup the props as well
-
 const Node = props => {
 	return (
 		<>
 			<div id={"node_" + props.for.value} className={"node"}>
 				<p
-					className="nodeText"
+					className={"nodeText row" + props.row}
 					draggable="true"
 					id={props.for.id}
 					onClick={props.onClick}
 					onDrag={props.onDrag}
 					onDragStart={props.onDragStart}
-					style={{ top: props.row * 40 + document.getElementById(props.nodes[0].id).style.top.split("px")[0], left: props.leftOffset }}
+					style={{ top: props.for.topOffset, left: props.for.leftOffset }}
 				>
 					{props.for.value}
 				</p>
@@ -266,9 +274,6 @@ const Node = props => {
 					onDragStart={props.onDragStart}
 					for={value}
 					row={props.row + 1}
-					leftOffset={props.offsets.reduce((rsf, pair) => (pair.id === value.id ? pair.offset : rsf), undefined)}
-					nodes={props.nodes}
-					offsets={props.offsets}
 					key={value.value}
 				/>
 			))}

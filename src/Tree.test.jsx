@@ -1,4 +1,4 @@
-import { bstInsert, determineXOffsetBT } from "./Tree"
+import { bstInsert, getNodeParentElementByID } from "./Tree"
 
 // bstInsert tests
 // No child test
@@ -8,6 +8,7 @@ test("inserts node in single node bst", () => {
 			value: 3,
 			id: Math.random(),
 			children: [],
+			parentID: null
 		},
 		4
 	)
@@ -17,12 +18,14 @@ test("inserts node in single node bst", () => {
 	expect(node.id).toBeDefined
 	expect(node.children).toBeInstanceOf(Array)
 	expect(node.children.length).toBe(1)
+	expect(node.parentID).toBeNull()
 
 	const child = node.children[0]
 	expect(child).toBeInstanceOf(Object)
 	expect(child.value).toBe(4)
 	expect(child.id).toBeDefined()
 	expect(child.children).toStrictEqual([])
+	expect(child.parentID).toBe(node.id)
 })
 // Duplicate node test
 test("duplicate nodes are not inserted in bsts", () => {
@@ -31,39 +34,46 @@ test("duplicate nodes are not inserted in bsts", () => {
 		value: 3,
 		id: Math.random(),
 		children: [],
+		parentID: null
 	}
 	expect(bstInsert(singleNode, 3)).toStrictEqual(singleNode)
 
 	// Recursive test
+	const id = Math.random()
 	const nodeOneChild = {
 		value: 3,
-		id: Math.random(),
+		id: id,
 		children: [
 			{
 				value: 4,
 				id: Math.random(),
 				children: [],
+				parentID: id
 			},
 		],
+		parentID: null
 	}
 	expect(bstInsert(nodeOneChild, 4)).toStrictEqual(nodeOneChild)
 
 	// Double child tests
 	const duplicateDoubleChild = {
 		value: 4,
-		id: Math.random(),
+		id: id,
 		children: [
 			{
 				value: 2,
 				id: Math.random(),
 				children: [],
+				parentID: id
 			},
 			{
 				value: 6,
 				id: Math.random(),
 				children: [],
+				parentID: id
 			},
 		],
+		parentID: null
 	}
 	expect(bstInsert(duplicateDoubleChild, 2)).toStrictEqual(duplicateDoubleChild)
 	expect(bstInsert(duplicateDoubleChild, 4)).toStrictEqual(duplicateDoubleChild)
@@ -73,17 +83,20 @@ test("duplicate nodes are not inserted in bsts", () => {
 // Single child tests
 // Higher insertion tests
 test("inserts higher node as second child in bst with one lesser subnode", () => {
+	const id = Math.random()
 	const node = bstInsert(
 		{
 			value: 3,
-			id: Math.random(),
+			id: id,
 			children: [
 				{
 					value: 2,
 					id: Math.random(),
 					children: [],
+					parentID: id
 				},
 			],
+			parentID: null
 		},
 		4
 	)
@@ -402,73 +415,4 @@ test("two child right insert right child", () => {
 	expect(grandChild.value).toBe(7)
 	expect(grandChild.id).toBeDefined
 	expect(grandChild.children).toStrictEqual([])
-})
-
-// determineXOffsetBT tests
-// Undefined node given / end of branch reached
-test("undefined node given to determineXOffsetBT() / end of branch reached", () => {
-	const output = determineXOffsetBT(undefined)
-	expect(output).toStrictEqual([])
-})
-// Single node given
-test("single node given to determineXOffsetBT()", () => {
-	const singleNode = {
-		value: 3,
-		id: Math.random(),
-		children: [],
-	}
-	const output = determineXOffsetBT(singleNode)
-
-	expect(output).toBeInstanceOf(Array)
-	expect(output.length).toBe(1)
-	expect(output[0]).toBeInstanceOf(Object)
-	expect(output[0].id).toBeDefined
-	expect(output[0].offset).toBeDefined
-})
-// Complex tree given
-test("complex tree given to determineXOffsetBT()", () => {
-	const tree = {
-		value: 6,
-		id: Math.random(),
-		children: [
-			{ value: 5, id: Math.random(), children: [{ value: 1, id: Math.random(), children: [] }] },
-			{
-				value: 8,
-				id: Math.random(),
-				children: [
-					{ value: 7, id: Math.random(), children: [] },
-					{ value: 9, id: Math.random(), children: [] },
-				],
-			},
-		],
-	}
-
-	const output = determineXOffsetBT(tree)
-
-	// Ensure the data structure generated properly
-	expect(output).toBeInstanceOf(Array)
-	expect(output.length).toBe(6)
-	expect(output[0]).toBeInstanceOf(Object)
-	expect(output[0].id).toBe(tree.id)
-	expect(output[0].offset).toBeDefined
-	expect(output[1]).toBeInstanceOf(Object)
-	expect(output[1].id).toBe(tree.children[0].id)
-	expect(output[1].offset).toBeDefined
-	expect(output[2]).toBeInstanceOf(Object)
-	expect(output[2].id).toBe(tree.children[0].children[0].id)
-	expect(output[2].offset).toBeDefined
-	expect(output[3]).toBeInstanceOf(Object)
-	expect(output[3].id).toBe(tree.children[1].id)
-	expect(output[3].offset).toBeDefined
-	expect(output[4]).toBeInstanceOf(Object)
-	expect(output[4].id).toBe(tree.children[1].children[0].id)
-	expect(output[4].offset).toBeDefined
-	expect(output[5]).toBeInstanceOf(Object)
-	expect(output[5].id).toBe(tree.children[1].children[1].id)
-	expect(output[5].offset).toBeDefined
-
-	// First child is left of the parent
-	expect(output[0].offset).toBeGreaterThan(output[1].offset)
-	// Second child is right of the parent
-	expect(output[0].offset).toBeLessThan(output[3].offset)
 })
