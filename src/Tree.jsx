@@ -4,6 +4,30 @@ let INITIAL_OFFSET_WIDTH = 200
 const INITIAL_OFFSET_HEIGHT = 80
 const SCALING_FACTOR = 2
 
+/**
+ * An object representing a node in a tree
+ * @typedef {Object} Node
+ * @property {Number} value - the value of the node
+ * @property {Number} id - randomly generated ID unique to the node
+ * @property {Node[]} children an array containing all child nodes of this node
+ * @property {Number?} parentID the id of the parent of this node, null if no parent
+ * @property {Number} topOffset represents the vertical position of this node in the treeView
+ * @property {Number} leftOffset represents the horizontal position of this node in the treeView
+ */
+
+/**
+ * A data structure to represent a parent-child relationship between nodes
+ * @typedef {Object} Line
+ * @property {Number} parentID the ID of the parent node in the relationship
+ * @property {Number} childID the ID of the child node in the relationship
+ */
+
+/**
+ * Remove the node with the given id from the given list of nodes
+ * @param {Node[]} nodes
+ * @param {*} id
+ * @returns
+ */
 const searchNodesAndRemoveById = (nodes, id) => {
 	let filt = nodes.filter(node => node.id !== +id)
 	let ret = []
@@ -31,6 +55,16 @@ const dimensionClamp = (value, min, max) => {
 	return Math.max(min, Math.min(value, max))
 }
 
+/**
+ * Insert a new node with the given value into the tree based off of the given node and add connecting lines
+ * @param {Node} node the base node of the tree to insert the new node into
+ * @param {Number} value the value of the new node to insert
+ * @param {Line[]} lines the current list of connecting lines
+ * @param {function(Line[]): null} lineCallbackFn the function to add a new connecting line
+ * @param {Number?} parentID the id of the parent of the current base node, used for recursion
+ * @param {Number?} depth how far down the current tree the new node is being inserted, used for recursion
+ * @returns the original tree with the new node inserted
+ */
 export const bstInsert = (node, value, lines, lineCallbackFn, parentID = null, depth = 0) => {
 	const newNode = { value: value, id: Math.random(), children: [], parentID: parentID, topOffset: node.topOffset + 40, leftOffset: node.leftOffset }
 	const treeViewBox = document.getElementById("treeView").getBoundingClientRect()
