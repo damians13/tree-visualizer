@@ -1,4 +1,4 @@
-import { bstInsert, getNodeParentElementByID } from "./Tree"
+import { bstInsert, getTreeHeight } from "./Tree"
 
 // bstInsert tests
 // No child test
@@ -8,7 +8,7 @@ test("inserts node in single node bst", () => {
 			value: 3,
 			id: Math.random(),
 			children: [],
-			parentID: null
+			parentID: null,
 		},
 		4
 	)
@@ -34,7 +34,7 @@ test("duplicate nodes are not inserted in bsts", () => {
 		value: 3,
 		id: Math.random(),
 		children: [],
-		parentID: null
+		parentID: null,
 	}
 	expect(bstInsert(singleNode, 3)).toStrictEqual(singleNode)
 
@@ -48,10 +48,12 @@ test("duplicate nodes are not inserted in bsts", () => {
 				value: 4,
 				id: Math.random(),
 				children: [],
-				parentID: id
+				parentID: id,
 			},
 		],
-		parentID: null
+		topOffset: undefined,
+		leftOffset: undefined,
+		parentID: null,
 	}
 	expect(bstInsert(nodeOneChild, 4)).toStrictEqual(nodeOneChild)
 
@@ -64,16 +66,18 @@ test("duplicate nodes are not inserted in bsts", () => {
 				value: 2,
 				id: Math.random(),
 				children: [],
-				parentID: id
+				parentID: id,
 			},
 			{
 				value: 6,
 				id: Math.random(),
 				children: [],
-				parentID: id
+				parentID: id,
 			},
 		],
-		parentID: null
+		topOffset: undefined,
+		leftOffset: undefined,
+		parentID: null,
 	}
 	expect(bstInsert(duplicateDoubleChild, 2)).toStrictEqual(duplicateDoubleChild)
 	expect(bstInsert(duplicateDoubleChild, 4)).toStrictEqual(duplicateDoubleChild)
@@ -93,10 +97,10 @@ test("inserts higher node as second child in bst with one lesser subnode", () =>
 					value: 2,
 					id: Math.random(),
 					children: [],
-					parentID: id
+					parentID: id,
 				},
 			],
-			parentID: null
+			parentID: null,
 		},
 		4
 	)
@@ -415,4 +419,63 @@ test("two child right insert right child", () => {
 	expect(grandChild.value).toBe(7)
 	expect(grandChild.id).toBeDefined
 	expect(grandChild.children).toStrictEqual([])
+})
+
+// Tree height tests
+// Single node
+test("tree height: 1", () => {
+	const singleNode = {
+		value: 3,
+		id: Math.random(),
+		children: [],
+		parentID: null,
+	}
+	const output = getTreeHeight(singleNode)
+
+	expect(output).toBe(1)
+})
+// Tree with height 2, 3 nodes total
+test("tree height: 2", () => {
+	const tree = {
+		value: 3,
+		id: Math.random(),
+		children: [
+			{
+				value: 1,
+				id: Math.random(),
+				children: [],
+			},
+			{
+				value: 5,
+				id: Math.random(),
+				children: [],
+			},
+		],
+	}
+
+	const output = getTreeHeight(tree)
+
+	expect(output).toBe(2)
+})
+// More complicated test with recursion
+test("tree height: 3", () => {
+	const tree = {
+		value: 6,
+		id: Math.random(),
+		children: [
+			{ value: 5, id: Math.random(), children: [{ value: 1, id: Math.random(), children: [] }] },
+			{
+				value: 8,
+				id: Math.random(),
+				children: [
+					{ value: 7, id: Math.random(), children: [] },
+					{ value: 9, id: Math.random(), children: [] },
+				],
+			},
+		],
+	}
+
+	const output = getTreeHeight(tree)
+
+	expect(output).toBe(3)
 })
