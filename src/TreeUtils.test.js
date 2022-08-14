@@ -1,4 +1,4 @@
-import { bstInsert, getTreeHeight } from "./Tree"
+import { bstInsert, getTreeHeight } from "./TreeUtils"
 
 // bstInsert tests
 // No child test
