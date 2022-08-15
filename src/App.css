@@ -41,6 +41,8 @@ svg {
 	align-items: center;
 	justify-content: center;
 	position: absolute;
+	border-radius: 5px;
+	border: 1px solid black;
 }
 
 .topBar {
@@ -52,4 +54,9 @@ svg {
 	display: flex;
 	flex-direction: column;
 	align-items: center;
+}
+
+.hidden {
+	transition: 0.01s;
+	transform: translateY(-9999px);
 }

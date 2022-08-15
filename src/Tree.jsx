@@ -1,7 +1,7 @@
 import React, { useReducer, useState } from "react"
 import * as Utils from "./TreeUtils"
 
-const Tree = props => {
+const Tree = () => {
 	const [viewMode, setViewMode] = useState("bst")
 	const [inputText, setInputText] = useState("")
 	const [nodes, setNodes] = useState([])
@@ -51,10 +51,16 @@ const Tree = props => {
 	}
 
 	const handleDragStart = e => {
+		e.target.classList.add("hidden")
+
 		setDragOffset({
 			x: e.nativeEvent.offsetX,
 			y: e.nativeEvent.offsetY,
 		})
+	}
+
+	const handleDragEnd = e => {
+		e.target.classList.remove("hidden")
 	}
 
 	const handleDrag = e => {
@@ -92,7 +98,7 @@ const Tree = props => {
 			</div>
 			<div id="treeView">
 				{nodes.map(value => (
-					<Node onClick={handleClick} onDrag={handleDrag} onDragStart={handleDragStart} for={value} row={1} key={value.value} />
+					<Node onClick={handleClick} onDrag={handleDrag} onDragStart={handleDragStart} onDragEnd={handleDragEnd} for={value} row={1} key={value.value} />
 				))}
 				<svg>
 					{lines.map(l => {
@@ -124,6 +130,7 @@ const Node = props => {
 					onClick={props.onClick}
 					onDrag={props.onDrag}
 					onDragStart={props.onDragStart}
+					onDragEnd={props.onDragEnd}
 					style={{ top: props.for.topOffset, left: props.for.leftOffset }}
 				>
 					{props.for.value}
@@ -131,7 +138,7 @@ const Node = props => {
 			</div>
 
 			{props.for.children.map(value => (
-				<Node onClick={props.onClick} onDrag={props.onDrag} onDragStart={props.onDragStart} for={value} row={props.row + 1} key={value.value} />
+				<Node onClick={props.onClick} onDrag={props.onDrag} onDragStart={props.onDragStart} onDragEnd={props.onDragEnd} for={value} row={props.row + 1} key={value.value} />
 			))}
 		</>
 	)
