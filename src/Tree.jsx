@@ -36,8 +36,8 @@ const Tree = () => {
 	}
 
 	const handleClick = e => {
-		setNodes(Utils.searchNodesAndRemoveById(nodes, e.target.id))
 		setLines(lines.filter(l => l.parentID !== +e.target.id && l.childID !== +e.target.id))
+		setNodes(Utils.searchNodesAndRemoveById(nodes, e.target.id))
 	}
 
 	const handleInsertClick = () => {
@@ -46,6 +46,29 @@ const Tree = () => {
 		// Update the tree nodes and clear the input
 		if (viewMode === "bst") {
 			insertBSTNode(+inputText)
+		} else if (viewMode === "binary" || viewMode === "custom") {
+			let newNode = { value: +inputText, id: Math.random(), children: [], parentID: null }
+
+			if (nodes.length === 0) {
+				newNode.topOffset = 40
+				newNode.leftOffset = (document.getElementById("treeView").clientWidth - 25) / 2
+
+				setNodes([newNode])
+			} else {
+				let allNodes = []
+				nodes.forEach(tree => allNodes.push(...Utils.flattenTree(tree)))
+				// Check for duplicate entry attempt
+				console.log(allNodes)
+				if (allNodes.reduce((rsf, node) => rsf || node.value === +inputText, false)) {
+					// TODO: Handle duplicate node entry attempt with animation
+					console.log("Attempted duplicate entry")
+				} else {
+					const treeViewBox = document.getElementById("treeView").getBoundingClientRect()
+					newNode.topOffset = nodes[nodes.length - 1].topOffset
+					newNode.leftOffset = Utils.dimensionClamp(nodes[nodes.length - 1].leftOffset + 80, treeViewBox.left, treeViewBox.right - 50)
+					setNodes([...nodes, newNode])
+				}
+			}
 		}
 		setInputText("")
 	}
@@ -101,18 +124,32 @@ const Tree = () => {
 					<Node onClick={handleClick} onDrag={handleDrag} onDragStart={handleDragStart} onDragEnd={handleDragEnd} for={value} row={1} key={value.value} />
 				))}
 				<svg>
-					{lines.map(l => {
-						// Flatten every tree on the page
-						let flattenedTree = []
-						for (let i = 0; i < nodes.length; i++) {
-							flattenedTree.push(...Utils.flattenTree(nodes[i]))
-						}
+					{
+						// eslint-disable-next-line
+						lines.map(l => {
+							// Flatten every tree on the page
+							let flattenedTree = []
+							for (let i = 0; i < nodes.length; i++) {
+								flattenedTree.push(...Utils.flattenTree(nodes[i]))
+							}
 
-						const parent = flattenedTree.find(node => node.id === l.parentID)
-						const child = flattenedTree.find(node => node.id === l.childID)
+							const parent = flattenedTree.find(node => node.id === l.parentID)
+							const child = flattenedTree.find(node => node.id === l.childID)
 
-						return <line x1={parent.leftOffset + 25} y1={parent.topOffset + 28} x2={child.leftOffset + 25} y2={child.topOffset + 28} className="line" key={l.parentID + "-" + l.childID} />
-					})}
+							if (parent !== undefined && child !== undefined) {
+								return (
+									<line
+										x1={parent.leftOffset + 25}
+										y1={parent.topOffset + 28}
+										x2={child.leftOffset + 25}
+										y2={child.topOffset + 28}
+										className="line"
+										key={l.parentID + "-" + l.childID}
+									/>
+								)
+							}
+						})
+					}
 				</svg>
 			</div>
 		</div>
