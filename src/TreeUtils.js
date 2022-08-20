@@ -88,7 +88,12 @@ export const dimensionClamp = (value, min, max) => {
  */
 export const bstInsert = (node, value, lines, lineCallbackFn, parentID = null, depth = 0) => {
 	const newNode = { value: value, id: Math.random(), children: [], parentID: parentID, topOffset: node.topOffset + 40, leftOffset: node.leftOffset }
-	const treeViewBox = document.getElementById("treeView").getBoundingClientRect()
+	let treeViewBox
+	if (document.getElementById("treeView") === null) {
+		treeViewBox = { top: 0, bottom: 0, left: 0, right: 0 }
+	} else {
+		treeViewBox = document.getElementById("treeView").getBoundingClientRect()
+	}
 
 	// Check for duplicate
 	if (value === node.value) return node
@@ -202,5 +207,75 @@ export const bstInsert = (node, value, lines, lineCallbackFn, parentID = null, d
 		console.error("Invalid BST: ")
 		console.error(node)
 		return node
+	}
+}
+
+/**
+ * Inserts the given node into the given tree in the first valid position given by breadth first search of the tree
+ * @param {Node} node the base node of the tree to insert the new node into
+ * @param {Number} value the value of the new node to insert
+ * @param {Line[]} lines the current list of connecting lines
+ * @param {function(Line[]): null} lineCallbackFn the function to add a new connecting line
+ */
+export const binaryInsert = (node, value, lines, lineCallbackFn) => {
+	const newNode = { value: value, id: Math.random(), children: [] }
+	let treeViewBox
+	if (document.getElementById("treeView") === null) {
+		treeViewBox = { top: 0, bottom: 0, left: 0, right: 0 }
+	} else {
+		treeViewBox = document.getElementById("treeView").getBoundingClientRect()
+	}
+
+	let visited = []
+	let queue = []
+
+	visited.push(node)
+	queue.push(node)
+
+	let i = 0
+	while (queue.length > 0) {
+		const n = queue.shift()
+		i++
+
+		if (n.children.length < 2) {
+			newNode.parentID = n.id
+			newNode.topOffset = dimensionClamp(n.topOffset + INITIAL_OFFSET_HEIGHT, treeViewBox.top - 16 - 25, treeViewBox.bottom - 66)
+
+			// Find how deep in the tree we are inserting this node
+			let depth = 0
+			while (i > 0) {
+				i -= 2 ** depth
+				depth++
+			}
+			console.log(`depth: ${depth}`)
+
+			// If no child is present, insert to the left
+			if (n.children.length === 0) {
+				newNode.leftOffset = dimensionClamp(n.leftOffset - INITIAL_OFFSET_WIDTH / SCALING_FACTOR ** (depth - 1), treeViewBox.left, treeViewBox.right - 50)
+			}
+			// One child, insertion side varies
+			else {
+				// Present child is to the right, insert to the left
+				if (n.children[0].leftOffset > n.leftOffset) {
+					newNode.leftOffset = dimensionClamp(n.leftOffset - INITIAL_OFFSET_WIDTH / SCALING_FACTOR ** (depth - 1), treeViewBox.left, treeViewBox.right - 50)
+				}
+				// Present child is to the left, insert to the right
+				else {
+					newNode.leftOffset = dimensionClamp(n.leftOffset + INITIAL_OFFSET_WIDTH / SCALING_FACTOR ** (depth - 1), treeViewBox.left, treeViewBox.right - 50)
+				}
+			}
+
+			lineCallbackFn([...lines, { parentID: n.id, childID: newNode.id }])
+
+			n.children.push(newNode)
+			break
+		}
+
+		n.children.forEach(child => {
+			if (!visited.includes(child)) {
+				visited.push(child)
+				queue.push(child)
+			}
+		})
 	}
 }
