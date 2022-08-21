@@ -247,7 +247,6 @@ export const binaryInsert = (node, value, lines, lineCallbackFn) => {
 				i -= 2 ** depth
 				depth++
 			}
-			console.log(`depth: ${depth}`)
 
 			// If no child is present, insert to the left
 			if (n.children.length === 0) {

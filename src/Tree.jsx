@@ -154,7 +154,7 @@ const Tree = () => {
 			</div>
 			<div id="treeView">
 				{nodes.map(value => (
-					<Node onClick={handleNodeClick} onDrag={handleDrag} onDragStart={handleDragStart} onDragEnd={handleDragEnd} for={value} row={1} key={value.value} />
+					<Node onClick={handleNodeClick} onDrag={handleDrag} onDragStart={handleDragStart} onDragEnd={handleDragEnd} for={value} row={1} key={value.id} />
 				))}
 				<svg>
 					{lines.map(l => {
@@ -208,7 +208,7 @@ const Node = props => {
 			</div>
 
 			{props.for.children.map(value => (
-				<Node onClick={props.onClick} onDrag={props.onDrag} onDragStart={props.onDragStart} onDragEnd={props.onDragEnd} for={value} row={props.row + 1} key={`value.value-${Math.random()}`} />
+				<Node onClick={props.onClick} onDrag={props.onDrag} onDragStart={props.onDragStart} onDragEnd={props.onDragEnd} for={value} row={props.row + 1} key={value.id} />
 			))}
 		</>
 	)
