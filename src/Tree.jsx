@@ -1,5 +1,6 @@
 import React, { useReducer, useState } from "react"
 import * as Utils from "./TreeUtils"
+import Node from "./Node"
 
 const Tree = () => {
 	const [viewMode, setViewMode] = useState("bst")
@@ -108,7 +109,7 @@ const Tree = () => {
 	}
 
 	const handleDragStart = e => {
-		e.target.classList.add("hidden")
+		//e.target.classList.add("hidden")
 
 		setDragOffset({
 			x: e.nativeEvent.offsetX,
@@ -117,7 +118,7 @@ const Tree = () => {
 	}
 
 	const handleDragEnd = e => {
-		e.target.classList.remove("hidden")
+		//e.target.classList.remove("hidden")
 	}
 
 	const handleDrag = e => {
@@ -142,7 +143,7 @@ const Tree = () => {
 
 	const handleHandleClick = e => {
 		e.preventDefault()
-		console.log(e.target)
+		//console.log(e.target)
 	}
 
 	return (
@@ -200,67 +201,20 @@ const Tree = () => {
 						}
 						return <></>
 					})}
+
+					{/* {handleDragObj.isDragging && (
+						<line
+							x1={handleDragObj.src.leftOffset + 25}
+							y1={handleDragObj.src.topOffset + 12}
+							x2={handleDragObj.mouseX}
+							y2={handleDragObj.mouseY}
+							className="line"
+							key={"mouse-drag-" + handleDragObj.src.id}
+						/>
+					)} */}
 				</svg>
 			</div>
 		</div>
-	)
-}
-
-const Node = props => {
-	const createBottomHandles = handleHandleClick => {
-		return (
-			<div style={{ display: "flex", position: "relative", height: "16px", top: "-20px" }}>
-				{(props.viewMode === "custom" || props.for.children.length === 1) && <div className="handle bottom" onClick={handleHandleClick}></div>}
-				{props.viewMode !== "custom" && props.for.children.length === 0 && (
-					<>
-						<div className="handle bottom" onClick={handleHandleClick}></div>
-						<div className="handle bottom" onClick={handleHandleClick}></div>
-					</>
-				)}
-			</div>
-		)
-	}
-
-	return (
-		<>
-			<div id={props.for.id} className={"node"} style={{ top: props.for.topOffset, left: props.for.leftOffset }}>
-				<div style={{ position: "relative", height: "16px", top: "-12px" }}>
-					{props.for.parentID === null && (
-						<div className="handle top">
-							<div className="handle" onClick={props.onHandleClick} draggable />
-						</div>
-					)}
-				</div>
-
-				<p
-					className={"nodeText row" + props.row}
-					draggable="true"
-					onClick={props.onClick}
-					onDrag={props.onDrag}
-					onDragStart={props.onDragStart}
-					onDragEnd={props.onDragEnd}
-					style={{ top: "-16px", zIndex: "1" }}
-				>
-					{props.for.value}
-				</p>
-
-				{createBottomHandles(props.onHandleClick)}
-			</div>
-
-			{props.for.children.map(value => (
-				<Node
-					onClick={props.onClick}
-					onDrag={props.onDrag}
-					onDragStart={props.onDragStart}
-					onDragEnd={props.onDragEnd}
-					for={value}
-					row={props.row + 1}
-					key={value.id}
-					viewMode={props.viewMode}
-					onHandleClick={props.onHandleClick}
-				/>
-			))}
-		</>
 	)
 }
 

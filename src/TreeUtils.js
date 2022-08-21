@@ -21,6 +21,14 @@ const SCALING_FACTOR = 2
  */
 
 /**
+ * A data structure to store data relating to a node's handle drag event
+ * @typedef {Object} HandleDragObj
+ * @property {Node} src the node whose handle is being dragged
+ * @property {Number} mouseX the current mouse x coordinate
+ * @property {Number} mouseY the current mouse y coordinate
+ */
+
+/**
  * Remove the node with the given id from the given list of nodes
  * @param {Node[]} nodes
  * @param {*} id
