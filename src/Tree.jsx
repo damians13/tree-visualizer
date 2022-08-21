@@ -68,8 +68,8 @@ const Tree = () => {
 	}
 
 	const handleNodeClick = e => {
-		setLines(lines.filter(l => l.parentID !== +e.target.id && l.childID !== +e.target.id))
-		setNodes(Utils.searchNodesAndRemoveById(nodes, e.target.id))
+		setLines(lines.filter(l => l.parentID !== +e.target.parentNode.id && l.childID !== +e.target.parentNode.id))
+		setNodes(Utils.searchNodesAndRemoveById(nodes, e.target.parentNode.id))
 	}
 
 	const handleLineClick = e => {
@@ -86,7 +86,9 @@ const Tree = () => {
 			setViewMode("custom")
 		}
 		// Re-structure the nodes state and remove the clicked line
-		setNodes([...Utils.searchNodesAndRemoveById(nodes, childID), childNode])
+		const removed = Utils.searchNodesAndRemoveById(nodes, childID)
+		childNode.parentID = null
+		setNodes([...removed, childNode])
 		setLines(lines.filter(line => line.childID !== +childID || line.parentID !== +parentID))
 	}
 
@@ -124,18 +126,23 @@ const Tree = () => {
 			// Find the moved node in the tree and update its position
 			let allNodes = []
 			nodes.forEach(tree => allNodes.push(...Utils.flattenTree(tree)))
-			const nodeObj = allNodes.find(node => node.id === +e.target.id)
+			const nodeObj = allNodes.find(node => node.id === +e.target.parentNode.id)
 
 			// Keep the node in the treeView area
-			const desiredTopOffset = e.pageY - dragOffset.y - 16 - 25
+			const desiredTopOffset = e.pageY - dragOffset.y - 25
 			const desiredLeftOffset = e.pageX - dragOffset.x
 			const treeViewBox = document.getElementById("treeView").getBoundingClientRect()
-			nodeObj.topOffset = Utils.dimensionClamp(desiredTopOffset, treeViewBox.top - 16 - 25, treeViewBox.bottom - 66)
+			nodeObj.topOffset = Utils.dimensionClamp(desiredTopOffset, treeViewBox.top - 25, treeViewBox.bottom - 50)
 			nodeObj.leftOffset = Utils.dimensionClamp(desiredLeftOffset, treeViewBox.left, treeViewBox.right - 50)
 
 			// Re-render the moved node
 			forceUpdate()
 		}
+	}
+
+	const handleHandleClick = e => {
+		e.preventDefault()
+		console.log(e.target)
 	}
 
 	return (
@@ -154,7 +161,17 @@ const Tree = () => {
 			</div>
 			<div id="treeView">
 				{nodes.map(value => (
-					<Node onClick={handleNodeClick} onDrag={handleDrag} onDragStart={handleDragStart} onDragEnd={handleDragEnd} for={value} row={1} key={value.id} />
+					<Node
+						onClick={handleNodeClick}
+						onDrag={handleDrag}
+						onDragStart={handleDragStart}
+						onDragEnd={handleDragEnd}
+						for={value}
+						row={1}
+						key={value.id}
+						viewMode={viewMode}
+						onHandleClick={handleHandleClick}
+					/>
 				))}
 				<svg>
 					{lines.map(l => {
@@ -172,9 +189,9 @@ const Tree = () => {
 								<line
 									onClick={handleLineClick}
 									x1={parent.leftOffset + 25}
-									y1={parent.topOffset + 28}
+									y1={parent.topOffset + 12}
 									x2={child.leftOffset + 25}
-									y2={child.topOffset + 28}
+									y2={child.topOffset + 12}
 									className="line"
 									id={l.parentID + "-" + l.childID}
 									key={l.parentID + "-" + l.childID}
@@ -190,25 +207,58 @@ const Tree = () => {
 }
 
 const Node = props => {
+	const createBottomHandles = handleHandleClick => {
+		return (
+			<div style={{ display: "flex", position: "relative", height: "16px", top: "-20px" }}>
+				{(props.viewMode === "custom" || props.for.children.length === 1) && <div className="handle bottom" onClick={handleHandleClick}></div>}
+				{props.viewMode !== "custom" && props.for.children.length === 0 && (
+					<>
+						<div className="handle bottom" onClick={handleHandleClick}></div>
+						<div className="handle bottom" onClick={handleHandleClick}></div>
+					</>
+				)}
+			</div>
+		)
+	}
+
 	return (
 		<>
-			<div id={"node_" + props.for.value} className={"node"}>
+			<div id={props.for.id} className={"node"} style={{ top: props.for.topOffset, left: props.for.leftOffset }}>
+				<div style={{ position: "relative", height: "16px", top: "-12px" }}>
+					{props.for.parentID === null && (
+						<div className="handle top">
+							<div className="handle" onClick={props.onHandleClick} draggable />
+						</div>
+					)}
+				</div>
+
 				<p
 					className={"nodeText row" + props.row}
 					draggable="true"
-					id={props.for.id}
 					onClick={props.onClick}
 					onDrag={props.onDrag}
 					onDragStart={props.onDragStart}
 					onDragEnd={props.onDragEnd}
-					style={{ top: props.for.topOffset, left: props.for.leftOffset }}
+					style={{ top: "-16px", zIndex: "1" }}
 				>
 					{props.for.value}
 				</p>
+
+				{createBottomHandles(props.onHandleClick)}
 			</div>
 
 			{props.for.children.map(value => (
-				<Node onClick={props.onClick} onDrag={props.onDrag} onDragStart={props.onDragStart} onDragEnd={props.onDragEnd} for={value} row={props.row + 1} key={value.id} />
+				<Node
+					onClick={props.onClick}
+					onDrag={props.onDrag}
+					onDragStart={props.onDragStart}
+					onDragEnd={props.onDragEnd}
+					for={value}
+					row={props.row + 1}
+					key={value.id}
+					viewMode={props.viewMode}
+					onHandleClick={props.onHandleClick}
+				/>
 			))}
 		</>
 	)

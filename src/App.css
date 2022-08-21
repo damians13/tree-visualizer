@@ -27,9 +27,31 @@ svg {
 	right: 50%;
 }
 
+.handle {
+	border-radius: 16px;
+	height: 16px;
+	width: 16px;
+	position: relative;
+	left: auto;
+	transition: all 0.15s ease-out;
+	z-index: "1";
+	user-select: none;
+}
+.handle:hover {
+	background-color: lightslategray;
+}
+.handle.top {
+	border-bottom-left-radius: 0px;
+	border-bottom-right-radius: 0px;
+}
+.handle.bottom {
+	border-top-left-radius: 0px;
+	border-top-right-radius: 0px;
+}
+
 .line {
-	stroke: gray;
-	stroke-width: 2;
+	stroke: lightslategray;
+	stroke-width: 8;
 }
 
 .nodeText {
@@ -40,13 +62,15 @@ svg {
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	position: absolute;
 	border-radius: 5px;
 	border: 1px solid black;
+	margin: 0px;
+	position: relative;
+	top: 0px;
 }
 
 .topBar {
-	background-color: gray;
+	background-color: lightslategray;
 	height: 25px;
 }
 
@@ -54,6 +78,7 @@ svg {
 	display: flex;
 	flex-direction: column;
 	align-items: center;
+	position: absolute;
 }
 
 .hidden {

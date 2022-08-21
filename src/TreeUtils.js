@@ -106,7 +106,7 @@ export const bstInsert = (node, value, lines, lineCallbackFn, parentID = null, d
 		} else {
 			newNode.leftOffset = dimensionClamp(node.leftOffset - INITIAL_OFFSET_WIDTH / SCALING_FACTOR ** depth, treeViewBox.left, treeViewBox.right - 50)
 		}
-		newNode.topOffset = dimensionClamp(node.topOffset + INITIAL_OFFSET_HEIGHT, treeViewBox.top - 16 - 25, treeViewBox.bottom - 66)
+		newNode.topOffset = dimensionClamp(node.topOffset + INITIAL_OFFSET_HEIGHT, treeViewBox.top - 25, treeViewBox.bottom - 50)
 
 		// Add a line from the parent node to the new child node
 		lineCallbackFn([...lines, { parentID: node.id, childID: newNode.id }])
@@ -129,7 +129,7 @@ export const bstInsert = (node, value, lines, lineCallbackFn, parentID = null, d
 		if (child.value < node.value && node.value < value) {
 			newNode.parentID = node.id
 			newNode.leftOffset = dimensionClamp(node.leftOffset + INITIAL_OFFSET_WIDTH / SCALING_FACTOR ** depth, treeViewBox.left, treeViewBox.right - 50)
-			newNode.topOffset = dimensionClamp(node.topOffset + INITIAL_OFFSET_HEIGHT, treeViewBox.top - 16 - 25, treeViewBox.bottom - 66)
+			newNode.topOffset = dimensionClamp(node.topOffset + INITIAL_OFFSET_HEIGHT, treeViewBox.top - 25, treeViewBox.bottom - 50)
 
 			// Add a line from the parent node to the new child node
 			lineCallbackFn([...lines, { parentID: node.id, childID: newNode.id }])
@@ -147,7 +147,7 @@ export const bstInsert = (node, value, lines, lineCallbackFn, parentID = null, d
 		else if (value < node.value && node.value < child.value) {
 			newNode.parentID = node.id
 			newNode.leftOffset = dimensionClamp(node.leftOffset - INITIAL_OFFSET_WIDTH / SCALING_FACTOR ** depth, treeViewBox.left, treeViewBox.right - 50)
-			newNode.topOffset = dimensionClamp(node.topOffset + INITIAL_OFFSET_HEIGHT, treeViewBox.top - 16 - 25, treeViewBox.bottom - 66)
+			newNode.topOffset = dimensionClamp(node.topOffset + INITIAL_OFFSET_HEIGHT, treeViewBox.top - 25, treeViewBox.bottom - 50)
 
 			// Add a line from the parent node to the new child node
 			lineCallbackFn([...lines, { parentID: node.id, childID: newNode.id }])
@@ -239,7 +239,7 @@ export const binaryInsert = (node, value, lines, lineCallbackFn) => {
 
 		if (n.children.length < 2) {
 			newNode.parentID = n.id
-			newNode.topOffset = dimensionClamp(n.topOffset + INITIAL_OFFSET_HEIGHT, treeViewBox.top - 16 - 25, treeViewBox.bottom - 66)
+			newNode.topOffset = dimensionClamp(n.topOffset + INITIAL_OFFSET_HEIGHT, treeViewBox.top - 25, treeViewBox.bottom - 50)
 
 			// Find how deep in the tree we are inserting this node
 			let depth = 0
