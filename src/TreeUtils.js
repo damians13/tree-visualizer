@@ -294,6 +294,7 @@ export const binaryInsert = (node, value, lines, lineCallbackFn) => {
  * @returns {Node} the node with the given ID if it is in the tree stemming from the given node (depth first search)
  */
 export const searchTreeForID = (node, id) => {
+	if (node === undefined) return null
 	if (node.id === id) return node
 	else return node.children.reduce((rsf, child) => (rsf !== null ? rsf : searchTreeForID(child, id)), null)
 }

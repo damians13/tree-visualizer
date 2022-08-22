@@ -1,6 +1,7 @@
 import React, { useReducer, useState } from "react"
 import * as Utils from "./TreeUtils"
 import Node from "./Node"
+import { useEffect } from "react"
 
 const Tree = () => {
 	const [viewMode, setViewMode] = useState("bst")
@@ -8,7 +9,10 @@ const Tree = () => {
 	const [nodes, setNodes] = useState([])
 	const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 })
 	const [lines, setLines] = useState([])
+	const [lineInProgress, setLineInProgress] = useState()
 	const [, forceUpdate] = useReducer(x => x + 1, 0)
+	// Seed ensures that all nodes re-render when a new node is added to preserve consistency in their props
+	const [seed, setSeed] = useState(Math.random())
 
 	const insertBSTNode = value => {
 		if (nodes.length === 0) {
@@ -69,8 +73,8 @@ const Tree = () => {
 	}
 
 	const handleNodeClick = e => {
-		setLines(lines.filter(l => l.parentID !== +e.target.parentNode.id && l.childID !== +e.target.parentNode.id))
-		setNodes(Utils.searchNodesAndRemoveById(nodes, e.target.parentNode.id))
+		setLines(lines.filter(l => l.parentID !== +e.target.parentNode.parentNode.id && l.childID !== +e.target.parentNode.parentNode.id))
+		setNodes(Utils.searchNodesAndRemoveById(nodes, e.target.parentNode.parentNode.id))
 	}
 
 	const handleLineClick = e => {
@@ -93,6 +97,11 @@ const Tree = () => {
 		setLines(lines.filter(line => line.childID !== +childID || line.parentID !== +parentID))
 	}
 
+	const handleLineInProgressClick = () => {
+		// This shouldn't be necessary, but it is here just in case
+		setLineInProgress()
+	}
+
 	const handleInsertClick = () => {
 		if (inputText === "") return
 
@@ -109,17 +118,17 @@ const Tree = () => {
 	}
 
 	const handleDragStart = e => {
-		//e.target.classList.add("hidden")
-
 		setDragOffset({
 			x: e.nativeEvent.offsetX,
 			y: e.nativeEvent.offsetY,
 		})
 	}
 
-	const handleDragEnd = e => {
-		//e.target.classList.remove("hidden")
-	}
+	useEffect(() => {
+		setSeed(Math.random())
+	}, [nodes])
+
+	const handleDragEnd = e => {}
 
 	const handleDrag = e => {
 		// This if statement filters out the last drag event which has coordinates (0, 0)
@@ -127,7 +136,7 @@ const Tree = () => {
 			// Find the moved node in the tree and update its position
 			let allNodes = []
 			nodes.forEach(tree => allNodes.push(...Utils.flattenTree(tree)))
-			const nodeObj = allNodes.find(node => node.id === +e.target.parentNode.id)
+			const nodeObj = allNodes.find(node => node.id === +e.target.parentNode.parentNode.id)
 
 			// Keep the node in the treeView area
 			const desiredTopOffset = e.pageY - dragOffset.y - 25
@@ -139,11 +148,6 @@ const Tree = () => {
 			// Re-render the moved node
 			forceUpdate()
 		}
-	}
-
-	const handleHandleClick = e => {
-		e.preventDefault()
-		//console.log(e.target)
 	}
 
 	return (
@@ -169,9 +173,15 @@ const Tree = () => {
 						onDragEnd={handleDragEnd}
 						for={value}
 						row={1}
-						key={value.id}
+						key={value.id + seed}
 						viewMode={viewMode}
-						onHandleClick={handleHandleClick}
+						stateData={{
+							nodes: nodes,
+							setNodes: setNodes,
+							lines: lines,
+							setLines: setLines,
+							setLineInProgress: setLineInProgress,
+						}}
 					/>
 				))}
 				<svg>
@@ -202,16 +212,17 @@ const Tree = () => {
 						return <></>
 					})}
 
-					{/* {handleDragObj.isDragging && (
+					{lineInProgress !== undefined && (
 						<line
-							x1={handleDragObj.src.leftOffset + 25}
-							y1={handleDragObj.src.topOffset + 12}
-							x2={handleDragObj.mouseX}
-							y2={handleDragObj.mouseY}
+							onClick={handleLineInProgressClick}
+							x1={lineInProgress.src.leftOffset + 25}
+							y1={lineInProgress.src.topOffset + 12}
+							x2={lineInProgress.mouseX}
+							y2={lineInProgress.mouseY}
 							className="line"
-							key={"mouse-drag-" + handleDragObj.src.id}
+							key={"mouse-drag-" + lineInProgress.src.id}
 						/>
-					)} */}
+					)}
 				</svg>
 			</div>
 		</div>

@@ -40,6 +40,9 @@ svg {
 .handle:hover {
 	background-color: lightslategray;
 }
+.handle:active {
+	background-color: transparent;
+}
 .handle.top {
 	border-bottom-left-radius: 0px;
 	border-bottom-right-radius: 0px;
@@ -79,9 +82,4 @@ svg {
 	flex-direction: column;
 	align-items: center;
 	position: absolute;
-}
-
-.hidden {
-	transition: 0.01s;
-	transform: translateY(-9999px);
 }

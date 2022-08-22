@@ -6,6 +6,8 @@ import React from "react"
 
 export const DragTypes = {
 	NODE: "node",
+	TOP_HANDLE: "top_handle",
+	BOTTOM_HANDLE: "bottom_handle",
 }
 
 const App = () => {
