@@ -35,9 +35,9 @@ const Node = props => {
 			const bottomHandle = item.type === DragTypes.BOTTOM_HANDLE
 			const topHandle = item.type === DragTypes.TOP_HANDLE
 			const lessThanTwoChildren = props.for.children.length < 2
-			const loopOntoSelf = props.for.id === item.forID
+			const wouldFormLoop = Utils.searchTreeForID(props.for, item.forID)
 
-			if (loopOntoSelf) return false
+			if (wouldFormLoop) return false
 			else if (bottomHandle && !hasParent) return true
 			else if (topHandle && (customMode || lessThanTwoChildren)) return true
 			else return false

@@ -289,7 +289,7 @@ export const binaryInsert = (node, value, lines, lineCallbackFn) => {
 
 /**
  * Returns the node with the given ID if it is in the tree stemming from the given node (depth first search)
- * @param {Node} tree the node to search all subtrees of
+ * @param {Node} node the node to search all subtrees of
  * @param {Number} id the ID to search for
  * @returns {Node} the node with the given ID if it is in the tree stemming from the given node (depth first search)
  */
