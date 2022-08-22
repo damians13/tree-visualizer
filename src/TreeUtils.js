@@ -22,7 +22,7 @@ const SCALING_FACTOR = 2
 
 /**
  * A data structure to store data relating to a node's handle drag event
- * @typedef {Object} HandleDragObj
+ * @typedef {Object} LineInProgress
  * @property {Node} src the node whose handle is being dragged
  * @property {Number} mouseX the current mouse x coordinate
  * @property {Number} mouseY the current mouse y coordinate
@@ -32,7 +32,7 @@ const SCALING_FACTOR = 2
  * Remove the node with the given id from the given list of nodes
  * @param {Node[]} nodes
  * @param {*} id
- * @returns
+ * @returns {Node[]} the given list of nodes without the node that has the given ID
  */
 export const searchNodesAndRemoveById = (nodes, id) => {
 	let filt = nodes.filter(node => node.id !== +id)
@@ -53,7 +53,7 @@ export const searchNodesAndRemoveById = (nodes, id) => {
 /**
  * Flattens the tree from the given node
  * @param {Object} node
- * @returns an array containing every node in the tree in one dimension
+ * @returns {Node[]} an array containing every node in the tree in one dimension
  */
 export const flattenTree = node => {
 	return [node, ...node.children.reduce((rsf, child) => [...rsf, ...flattenTree(child)], [])]
@@ -63,7 +63,7 @@ export const flattenTree = node => {
  * Returns the height of the tree from the given node
  * @param {Object} node
  * @param {Number} row 1 for default
- * @returns
+ * @returns {Number} the height of the tree from the given node
  */
 export const getTreeHeight = (node, row = 1) => {
 	if (node.children.length === 0) {
@@ -78,7 +78,7 @@ export const getTreeHeight = (node, row = 1) => {
  * @param {Number} value
  * @param {Number} min
  * @param {Number} max
- * @returns the number constrained between the upper and lower limits
+ * @returns {Number} the number constrained between the upper and lower limits
  */
 export const dimensionClamp = (value, min, max) => {
 	return Math.max(min, Math.min(value, max))
@@ -92,7 +92,7 @@ export const dimensionClamp = (value, min, max) => {
  * @param {function(Line[]): null} lineCallbackFn the function to add a new connecting line
  * @param {Number?} parentID the id of the parent of the current base node, used for recursion
  * @param {Number?} depth how far down the current tree the new node is being inserted, used for recursion
- * @returns the original tree with the new node inserted
+ * @returns {Node} the original tree with the new node inserted
  */
 export const bstInsert = (node, value, lines, lineCallbackFn, parentID = null, depth = 0) => {
 	const newNode = { value: value, id: Math.random(), children: [], parentID: parentID, topOffset: node.topOffset + 40, leftOffset: node.leftOffset }
@@ -285,4 +285,15 @@ export const binaryInsert = (node, value, lines, lineCallbackFn) => {
 			}
 		})
 	}
+}
+
+/**
+ * Returns the node with the given ID if it is in the tree stemming from the given node (depth first search)
+ * @param {Node} tree the node to search all subtrees of
+ * @param {Number} id the ID to search for
+ * @returns {Node} the node with the given ID if it is in the tree stemming from the given node (depth first search)
+ */
+export const searchTreeForID = (node, id) => {
+	if (node.id === id) return node
+	else return node.children.reduce((rsf, child) => (rsf !== null ? rsf : searchTreeForID(child, id)), null)
 }

@@ -1,4 +1,4 @@
-import { binaryInsert, bstInsert, getTreeHeight } from "./TreeUtils"
+import { binaryInsert, bstInsert, getTreeHeight, searchTreeForID } from "./TreeUtils"
 
 // bstInsert tests
 // No child test
@@ -746,4 +746,72 @@ test("tree height: 3", () => {
 	const output = getTreeHeight(tree)
 
 	expect(output).toBe(3)
+})
+
+// searchTreeForID tests
+// Single node
+test("searchTreeForID single node", () => {
+	const id = Math.random()
+	const node = {
+		value: 4,
+		id: id,
+		children: [],
+		parentID: null,
+	}
+
+	expect(searchTreeForID(node, Math.random())).toBe(null)
+	expect(searchTreeForID(node, id)).toBe(node)
+})
+// One child
+test("searchTreeForID child node", () => {
+	const id1 = Math.random()
+	const id2 = Math.random()
+	const node = {
+		value: 4,
+		id: id1,
+		children: [
+			{
+				value: 17,
+				id: id2,
+				children: [],
+			},
+		],
+		parentID: null,
+	}
+
+	expect(searchTreeForID(node, Math.random())).toBe(null)
+	expect(searchTreeForID(node, id1)).toBe(node)
+	expect(searchTreeForID(node, id2)).toBe(node.children[0])
+})
+// Larger tree
+test("searchTreeForID larger tree", () => {
+	const id1 = Math.random()
+	const id2 = Math.random()
+	const id3 = Math.random()
+	const id4 = Math.random()
+	const id5 = Math.random()
+	const id6 = Math.random()
+	const node = {
+		value: 6,
+		id: id1,
+		children: [
+			{ value: 5, id: id2, children: [{ value: 1, id: id3, children: [] }] },
+			{
+				value: 8,
+				id: id4,
+				children: [
+					{ value: 7, id: id5, children: [] },
+					{ value: 9, id: id6, children: [] },
+				],
+			},
+		],
+	}
+
+	expect(searchTreeForID(node, Math.random())).toBe(null)
+	expect(searchTreeForID(node, id1)).toBe(node)
+	expect(searchTreeForID(node, id2)).toBe(node.children[0])
+	expect(searchTreeForID(node, id3)).toBe(node.children[0].children[0])
+	expect(searchTreeForID(node, id4)).toBe(node.children[1])
+	expect(searchTreeForID(node, id5)).toBe(node.children[1].children[0])
+	expect(searchTreeForID(node, id6)).toBe(node.children[1].children[1])
 })
