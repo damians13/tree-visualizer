@@ -92,10 +92,18 @@ export const dimensionClamp = (value, min, max) => {
  * @param {function(Line[]): null} lineCallbackFn the function to add a new connecting line
  * @param {Number?} parentID the id of the parent of the current base node, used for recursion
  * @param {Number?} depth how far down the current tree the new node is being inserted, used for recursion
+ * @param {Node} newNode the node to insert, automatically generated but overrideable
  * @returns {Node} the original tree with the new node inserted
  */
-export const bstInsert = (node, value, lines, lineCallbackFn, parentID = null, depth = 0) => {
-	const newNode = { value: value, id: Math.random(), children: [], parentID: parentID, topOffset: node.topOffset + 40, leftOffset: node.leftOffset }
+export const bstInsert = (
+	node,
+	value,
+	lines,
+	lineCallbackFn,
+	parentID = null,
+	depth = 0,
+	newNode = { value: value, id: Math.random(), children: [], parentID: parentID, topOffset: node.topOffset + 40, leftOffset: node.leftOffset }
+) => {
 	let treeViewBox
 	if (document.getElementById("treeView") === null) {
 		treeViewBox = { top: 0, bottom: 0, left: 0, right: 0 }
@@ -297,4 +305,65 @@ export const searchTreeForID = (node, id) => {
 	if (node === undefined) return null
 	if (node.id === id) return node
 	else return node.children.reduce((rsf, child) => (rsf !== null ? rsf : searchTreeForID(child, id)), null)
+}
+
+/**
+ * Performs any necessary rotations on an AVL tree and all subtrees
+ * @param {Node} node the node to balance the subtrees of
+ * @param {Line[]} lines the current list of connecting lines
+ * @param {function(Line[]): null} lineCallbackFn the function to add a new connecting line
+ */
+export const avlBalance = (node, lines, lineCallbackFn) => {
+	if (node.children.length === 0) {
+		return node
+	} else if (node.children.length === 1) {
+		// Balance the subtree
+		const balancedChild = avlBalance(node.children[0], lines, lineCallbackFn)
+		// Perform rotation if necessary
+		if (getTreeHeight(balancedChild) > 1) {
+			const nodeClone = JSON.parse(JSON.stringify(node))
+			const childClone = JSON.parse(JSON.stringify(balancedChild))
+
+			childClone.parentID = node.parentID
+			nodeClone.parentID = balancedChild.id
+			nodeClone.children = nodeClone.children.filter(child => child.id !== balancedChild.id)
+
+			// Insert nodeClone to the right
+			if (nodeClone.value > childClone.value) {
+				childClone.children.push(nodeClone)
+			}
+			// Insert nodeClone to the left
+			else {
+				childClone.children.unshift(nodeClone)
+			}
+
+			return avlBalance(childClone)
+		}
+		// Return this node with the balanced subtree
+		else {
+			return node
+		}
+	} else if (node.children.length === 2) {
+		// Balance each subtree
+		const balancedLeftChild = avlBalance(node.children[0], lines, lineCallbackFn)
+		const balancedRightChild = avlBalance(node.children[1], lines, lineCallbackFn)
+		const nodeClone = JSON.parse(JSON.stringify(node))
+
+		const leftHeight = getTreeHeight(balancedLeftChild)
+		const rightHeight = getTreeHeight(balancedRightChild)
+
+		// Left too long, rotate right
+		if (leftHeight - rightHeight > 1) {
+		}
+		// Right too long, rotate left
+		else if (rightHeight - leftHeight > 1) {
+			balancedRightChild.parentID = nodeClone.parentID
+			nodeClone.parentID = balancedRightChild.id
+			nodeClone.children = nodeClone.children.filter(child => child.id !== balancedRightChild.id)
+		}
+		// No rotation needed
+		else {
+			return node
+		}
+	}
 }
