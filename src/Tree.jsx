@@ -69,7 +69,13 @@ const Tree = () => {
 	}
 
 	const handleInputChange = e => {
-		setInputText(e.target.value)
+		// Verify input is numeric before accepting update
+		const inputRegex = /(?:\d+(?:\.\d*)?)?/
+		const matches = e.target.value.match(inputRegex)
+
+		if (matches !== null && e.target.value.length === matches[0].length) {
+			setInputText(e.target.value)
+		}
 	}
 
 	const handleNodeClick = e => {
