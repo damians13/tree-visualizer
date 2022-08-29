@@ -323,24 +323,64 @@ export const avlBalance = (node, lines, lineCallbackFn) => {
 		if (getTreeHeight(balancedChild) > 1) {
 			const nodeClone = JSON.parse(JSON.stringify(node))
 			const childClone = JSON.parse(JSON.stringify(balancedChild))
+			const newLines = lines.filter(line => line.childID !== childClone.id && line.parentID !== nodeClone.id)
 
 			childClone.parentID = node.parentID
-			nodeClone.parentID = balancedChild.id
-			nodeClone.children = nodeClone.children.filter(child => child.id !== balancedChild.id)
-
-			// Insert nodeClone to the right
-			if (nodeClone.value > childClone.value) {
-				childClone.children.push(nodeClone)
+			nodeClone.children = []
+			// Branch right
+			if (childClone.value > nodeClone.value) {
+				// Two children
+				if (childClone.children.length === 2) {
+					// Insert nodeClone to left grandchild
+					nodeClone.parentID = childClone.children[0].id
+					childClone.children[0].children.push(nodeClone)
+					newLines.push({ childID: nodeClone.id, parentID: childClone.children[0].id })
+				}
+				// Branch right again
+				else if (childClone.children[0].value > childClone.value) {
+					// Insert nodeClone to the left
+					nodeClone.parentID = balancedChild.id
+					childClone.children.unshift(nodeClone)
+					newLines.push({ childID: nodeClone.id, parentID: balancedChild.id })
+				}
+				// Branch left this time
+				else {
+					// Insert nodeClone to grandchild
+					nodeClone.parentID = childClone.children[0].id
+					childClone.children[0].children.push(nodeClone)
+					newLines.push({ childID: nodeClone.id, parentID: childClone.children[0].id })
+				}
 			}
-			// Insert nodeClone to the left
+			// Branch left
 			else {
-				childClone.children.unshift(nodeClone)
+				// Two children
+				if (childClone.children.length === 2) {
+					// Insert nodeClone to right grandchild
+					nodeClone.parentID = childClone.children[1].id
+					childClone.children[1].children.push(nodeClone)
+					newLines.push({ childID: nodeClone.id, parentID: childClone.children[1].id })
+				}
+				// Branch right this time
+				else if (childClone.children[0].value > childClone.value) {
+					// Insert nodeClone to grandchild
+					nodeClone.parentID = childClone.children[0].id
+					childClone.children[0].children.push(nodeClone)
+					newLines.push({ childID: nodeClone.id, parentID: childClone.children[0].id })
+				}
+				// Branch left again
+				else {
+					// Insert nodeClone to the right
+					nodeClone.parentID = balancedChild.id
+					childClone.children.push(nodeClone)
+					newLines.push({ childID: nodeClone.id, parentID: balancedChild.id })
+				}
 			}
 
-			return avlBalance(childClone)
+			return avlBalance(childClone, newLines, lineCallbackFn)
 		}
-		// Return this node with the balanced subtree
+		// No rotation needed
 		else {
+			lineCallbackFn(lines)
 			return node
 		}
 	} else if (node.children.length === 2) {
@@ -349,21 +389,9 @@ export const avlBalance = (node, lines, lineCallbackFn) => {
 		const balancedRightChild = avlBalance(node.children[1], lines, lineCallbackFn)
 		const nodeClone = JSON.parse(JSON.stringify(node))
 
-		const leftHeight = getTreeHeight(balancedLeftChild)
-		const rightHeight = getTreeHeight(balancedRightChild)
+		nodeClone.children = [balancedLeftChild, balancedRightChild]
 
-		// Left too long, rotate right
-		if (leftHeight - rightHeight > 1) {
-		}
-		// Right too long, rotate left
-		else if (rightHeight - leftHeight > 1) {
-			balancedRightChild.parentID = nodeClone.parentID
-			nodeClone.parentID = balancedRightChild.id
-			nodeClone.children = nodeClone.children.filter(child => child.id !== balancedRightChild.id)
-		}
-		// No rotation needed
-		else {
-			return node
-		}
+		lineCallbackFn(lines)
+		return nodeClone
 	}
 }

@@ -1069,3 +1069,111 @@ test("avlBalance left -> right", () => {
 	expect(eight.children).toStrictEqual([])
 	expect(eight.parentID).toBe(seven.id)
 })
+// Unbalanced right->double, only possible on conversion from BST
+test("avlBalance right -> double", () => {
+	const superID = Math.random()
+	const id1 = Math.random()
+	const id2 = Math.random()
+	const id3 = Math.random()
+	const id4 = Math.random()
+	const node = {
+		value: 6,
+		id: id1,
+		children: [
+			{
+				value: 8,
+				id: id2,
+				children: [
+					{ value: 7, id: id3, children: [], parentID: id2 },
+					{ value: 9, id: id4, children: [], parentID: id2 },
+				],
+				parentID: id1,
+			},
+		],
+		parentID: superID,
+	}
+
+	const eight = avlBalance(node, [], () => {})
+	expect(eight).toBeInstanceOf(Object)
+	expect(eight.value).toBe(8)
+	expect(eight.id).toBe(id2)
+	expect(eight.children).toBeInstanceOf(Array)
+	expect(eight.children.length).toBe(2)
+	expect(eight.parentID).toBe(superID)
+
+	const seven = eight.children[0]
+	expect(seven).toBeInstanceOf(Object)
+	expect(seven.value).toBe(7)
+	expect(seven.id).toBe(id3)
+	expect(seven.children).toBeInstanceOf(Array)
+	expect(seven.children.length).toBe(1)
+	expect(seven.parentID).toBe(eight.id)
+
+	const nine = eight.children[1]
+	expect(nine).toBeInstanceOf(Object)
+	expect(nine.value).toBe(9)
+	expect(nine.id).toBe(id4)
+	expect(nine.children).toStrictEqual([])
+	expect(nine.parentID).toBe(eight.id)
+
+	const six = seven.children[0]
+	expect(six).toBeInstanceOf(Object)
+	expect(six.value).toBe(6)
+	expect(six.id).toBe(id1)
+	expect(six.children).toStrictEqual([])
+	expect(six.parentID).toBe(seven.id)
+})
+// Unbalanced left->double, only possible on conversion from BST
+test("avlBalance left -> double", () => {
+	const superID = Math.random()
+	const id1 = Math.random()
+	const id2 = Math.random()
+	const id3 = Math.random()
+	const id4 = Math.random()
+	const node = {
+		value: 6,
+		id: id1,
+		children: [
+			{
+				value: 4,
+				id: id2,
+				children: [
+					{ value: 3, id: id3, children: [], parentID: id2 },
+					{ value: 5, id: id4, children: [], parentID: id2 },
+				],
+				parentID: id1,
+			},
+		],
+		parentID: superID,
+	}
+
+	const four = avlBalance(node, [], () => {})
+	expect(four).toBeInstanceOf(Object)
+	expect(four.value).toBe(4)
+	expect(four.id).toBe(id2)
+	expect(four.children).toBeInstanceOf(Array)
+	expect(four.children.length).toBe(2)
+	expect(four.parentID).toBe(superID)
+
+	const three = four.children[0]
+	expect(three).toBeInstanceOf(Object)
+	expect(three.value).toBe(3)
+	expect(three.id).toBe(id3)
+	expect(three.children).toStrictEqual([])
+	expect(three.parentID).toBe(four.id)
+
+	const five = four.children[1]
+	expect(five).toBeInstanceOf(Object)
+	expect(five.value).toBe(5)
+	expect(five.id).toBe(id4)
+	expect(five.children).toBeInstanceOf(Array)
+	expect(five.children.length).toBe(1)
+	expect(five.parentID).toBe(four.id)
+
+	const six = five.children[0]
+	expect(six).toBeInstanceOf(Object)
+	expect(six.value).toBe(6)
+	expect(six.id).toBe(id1)
+	expect(six.children).toStrictEqual([])
+	expect(six.parentID).toBe(five.id)
+})
