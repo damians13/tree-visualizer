@@ -88,8 +88,6 @@ export const dimensionClamp = (value, min, max) => {
  * Insert a new node with the given value into the tree based off of the given node and add connecting lines
  * @param {Node} node the base node of the tree to insert the new node into
  * @param {Number} value the value of the new node to insert
- * @param {Line[]} lines the current list of connecting lines
- * @param {function(Line[]): null} lineCallbackFn the function to add a new connecting line
  * @param {Number?} parentID the id of the parent of the current base node, used for recursion
  * @param {Number?} depth how far down the current tree the new node is being inserted, used for recursion
  * @param {Node} newNode the node to insert, automatically generated but overrideable
@@ -98,8 +96,6 @@ export const dimensionClamp = (value, min, max) => {
 export const bstInsert = (
 	node,
 	value,
-	lines,
-	lineCallbackFn,
 	parentID = null,
 	depth = 0,
 	newNode = { value: value, id: Math.random(), children: [], parentID: parentID, topOffset: node.topOffset + 40, leftOffset: node.leftOffset }
@@ -111,11 +107,13 @@ export const bstInsert = (
 		treeViewBox = document.getElementById("treeView").getBoundingClientRect()
 	}
 
+	const nodeClone = JSON.parse(JSON.stringify(node))
+
 	// Check for duplicate
-	if (value === node.value) return node
+	if (newNode.value === nodeClone.value) return nodeClone
 
 	// Node has no children
-	if (node.children.length === 0) {
+	if (nodeClone.children.length === 0) {
 		newNode.parentID = node.id
 		if (value > node.value) {
 			newNode.leftOffset = dimensionClamp(node.leftOffset + INITIAL_OFFSET_WIDTH / SCALING_FACTOR ** depth, treeViewBox.left, treeViewBox.right - 50)
@@ -123,9 +121,6 @@ export const bstInsert = (
 			newNode.leftOffset = dimensionClamp(node.leftOffset - INITIAL_OFFSET_WIDTH / SCALING_FACTOR ** depth, treeViewBox.left, treeViewBox.right - 50)
 		}
 		newNode.topOffset = dimensionClamp(node.topOffset + INITIAL_OFFSET_HEIGHT, treeViewBox.top - 25, treeViewBox.bottom - 50)
-
-		// Add a line from the parent node to the new child node
-		lineCallbackFn([...lines, { parentID: node.id, childID: newNode.id }])
 
 		return {
 			value: node.value,
@@ -139,34 +134,21 @@ export const bstInsert = (
 
 	// Node has one child
 	else if (node.children.length === 1) {
-		const child = node.children[0]
+		const child = nodeClone.children[0]
 
 		// Insert to right on this node
-		if (child.value < node.value && node.value < value) {
+		if (child.value < node.value && node.value < newNode.value) {
 			newNode.parentID = node.id
 			newNode.leftOffset = dimensionClamp(node.leftOffset + INITIAL_OFFSET_WIDTH / SCALING_FACTOR ** depth, treeViewBox.left, treeViewBox.right - 50)
 			newNode.topOffset = dimensionClamp(node.topOffset + INITIAL_OFFSET_HEIGHT, treeViewBox.top - 25, treeViewBox.bottom - 50)
 
-			// Add a line from the parent node to the new child node
-			lineCallbackFn([...lines, { parentID: node.id, childID: newNode.id }])
-
-			return {
-				value: node.value,
-				id: node.id,
-				children: [child, newNode],
-				parentID: node.parentID,
-				topOffset: node.topOffset,
-				leftOffset: node.leftOffset,
-			}
+			return { value: node.value, id: node.id, children: [child, newNode], parentID: node.parentID, topOffset: node.topOffset, leftOffset: node.leftOffset }
 		}
 		// Insert to left on this node
-		else if (value < node.value && node.value < child.value) {
+		else if (newNode.value < node.value && node.value < child.value) {
 			newNode.parentID = node.id
 			newNode.leftOffset = dimensionClamp(node.leftOffset - INITIAL_OFFSET_WIDTH / SCALING_FACTOR ** depth, treeViewBox.left, treeViewBox.right - 50)
 			newNode.topOffset = dimensionClamp(node.topOffset + INITIAL_OFFSET_HEIGHT, treeViewBox.top - 25, treeViewBox.bottom - 50)
-
-			// Add a line from the parent node to the new child node
-			lineCallbackFn([...lines, { parentID: node.id, childID: newNode.id }])
 
 			return {
 				value: node.value,
@@ -178,10 +160,20 @@ export const bstInsert = (
 			}
 		}
 		// Insert on child node
+		if (value === null) {
+			return {
+				value: node.value,
+				id: node.id,
+				children: [bstInsert(child, value, node.id, depth + 1, newNode, true)],
+				parentID: node.parentID,
+				topOffset: node.topOffset,
+				leftOffset: node.leftOffset,
+			}
+		}
 		return {
 			value: node.value,
 			id: node.id,
-			children: [bstInsert(child, value, lines, lineCallbackFn, node.id, depth + 1)],
+			children: [bstInsert(child, value, node.id, depth + 1)],
 			parentID: node.parentID,
 			topOffset: node.topOffset,
 			leftOffset: node.leftOffset,
@@ -190,15 +182,25 @@ export const bstInsert = (
 
 	// Node has two children
 	else if (node.children.length === 2) {
-		const firstChild = node.children[0]
-		const secondChild = node.children[1]
+		const firstChild = nodeClone.children[0]
+		const secondChild = nodeClone.children[1]
 
 		// Insert on right of node (secondChild)
-		if (value > node.value) {
+		if (newNode.value > node.value) {
+			if (value === null) {
+				return {
+					value: node.value,
+					id: node.id,
+					children: [firstChild, bstInsert(secondChild, value, node.id, depth + 1, newNode, true)],
+					parentID: node.parentID,
+					topOffset: node.topOffset,
+					leftOffset: node.leftOffset,
+				}
+			}
 			return {
 				value: node.value,
 				id: node.id,
-				children: [firstChild, bstInsert(secondChild, value, lines, lineCallbackFn, node.id, depth + 1)],
+				children: [firstChild, bstInsert(secondChild, value, node.id, depth + 1)],
 				parentID: node.parentID,
 				topOffset: node.topOffset,
 				leftOffset: node.leftOffset,
@@ -206,11 +208,21 @@ export const bstInsert = (
 		}
 
 		// Insert on left of node (firstChild)
-		else if (value < node.value) {
+		else if (newNode.value < node.value) {
+			if (value === null) {
+				return {
+					value: node.value,
+					id: node.id,
+					children: [bstInsert(firstChild, value, node.id, depth + 1, newNode, true), secondChild],
+					parentID: node.parentID,
+					topOffset: node.topOffset,
+					leftOffset: node.leftOffset,
+				}
+			}
 			return {
 				value: node.value,
 				id: node.id,
-				children: [bstInsert(firstChild, value, lines, lineCallbackFn, node.id, depth + 1), secondChild],
+				children: [bstInsert(firstChild, value, node.id, depth + 1), secondChild],
 				parentID: node.parentID,
 				topOffset: node.topOffset,
 				leftOffset: node.leftOffset,
@@ -230,10 +242,9 @@ export const bstInsert = (
  * Inserts the given node into the given tree in the first valid position given by breadth first search of the tree
  * @param {Node} node the base node of the tree to insert the new node into
  * @param {Number} value the value of the new node to insert
- * @param {Line[]} lines the current list of connecting lines
- * @param {function(Line[]): null} lineCallbackFn the function to add a new connecting line
+ * @returns {Node} the initial node with the new node inserted into a subtree
  */
-export const binaryInsert = (node, value, lines, lineCallbackFn) => {
+export const binaryInsert = (node, value) => {
 	const newNode = { value: value, id: Math.random(), children: [] }
 	let treeViewBox
 	if (document.getElementById("treeView") === null) {
@@ -245,8 +256,10 @@ export const binaryInsert = (node, value, lines, lineCallbackFn) => {
 	let visited = []
 	let queue = []
 
-	visited.push(node)
-	queue.push(node)
+	const nodeClone = JSON.parse(JSON.stringify(node))
+
+	visited.push(nodeClone)
+	queue.push(nodeClone)
 
 	let i = 0
 	while (queue.length > 0) {
@@ -280,8 +293,6 @@ export const binaryInsert = (node, value, lines, lineCallbackFn) => {
 				}
 			}
 
-			lineCallbackFn([...lines, { parentID: n.id, childID: newNode.id }])
-
 			n.children.push(newNode)
 			break
 		}
@@ -293,6 +304,8 @@ export const binaryInsert = (node, value, lines, lineCallbackFn) => {
 			}
 		})
 	}
+
+	return nodeClone
 }
 
 /**
@@ -310,88 +323,99 @@ export const searchTreeForID = (node, id) => {
 /**
  * Performs any necessary rotations on an AVL tree and all subtrees
  * @param {Node} node the node to balance the subtrees of
- * @param {Line[]} lines the current list of connecting lines
- * @param {function(Line[]): null} lineCallbackFn the function to add a new connecting line
+ * @returns {Node} the given node and all subtrees balanced to match AVL tree format
  */
-export const avlBalance = (node, lines, lineCallbackFn) => {
+export const avlBalance = node => {
 	if (node.children.length === 0) {
 		return node
 	} else if (node.children.length === 1) {
 		// Balance the subtree
-		const balancedChild = avlBalance(node.children[0], lines, lineCallbackFn)
+		const balancedChild = avlBalance(node.children[0])
 		// Perform rotation if necessary
 		if (getTreeHeight(balancedChild) > 1) {
 			const nodeClone = JSON.parse(JSON.stringify(node))
-			const childClone = JSON.parse(JSON.stringify(balancedChild))
-			const newLines = lines.filter(line => line.childID !== childClone.id && line.parentID !== nodeClone.id)
 
-			childClone.parentID = node.parentID
+			balancedChild.parentID = node.parentID
 			nodeClone.children = []
 			// Branch right
-			if (childClone.value > nodeClone.value) {
+			if (balancedChild.value > nodeClone.value) {
 				// Two children
-				if (childClone.children.length === 2) {
+				if (balancedChild.children.length === 2) {
 					// Insert nodeClone to left grandchild
-					nodeClone.parentID = childClone.children[0].id
-					childClone.children[0].children.push(nodeClone)
-					newLines.push({ childID: nodeClone.id, parentID: childClone.children[0].id })
+					nodeClone.parentID = balancedChild.children[0].id
+					balancedChild.children[0].children.push(nodeClone)
 				}
 				// Branch right again
-				else if (childClone.children[0].value > childClone.value) {
+				else if (balancedChild.children[0].value > balancedChild.value) {
 					// Insert nodeClone to the left
 					nodeClone.parentID = balancedChild.id
-					childClone.children.unshift(nodeClone)
-					newLines.push({ childID: nodeClone.id, parentID: balancedChild.id })
+					balancedChild.children.unshift(nodeClone)
 				}
 				// Branch left this time
 				else {
 					// Insert nodeClone to grandchild
-					nodeClone.parentID = childClone.children[0].id
-					childClone.children[0].children.push(nodeClone)
-					newLines.push({ childID: nodeClone.id, parentID: childClone.children[0].id })
+					nodeClone.parentID = balancedChild.children[0].id
+					balancedChild.children[0].children.push(nodeClone)
 				}
 			}
 			// Branch left
 			else {
 				// Two children
-				if (childClone.children.length === 2) {
+				if (balancedChild.children.length === 2) {
 					// Insert nodeClone to right grandchild
-					nodeClone.parentID = childClone.children[1].id
-					childClone.children[1].children.push(nodeClone)
-					newLines.push({ childID: nodeClone.id, parentID: childClone.children[1].id })
+					nodeClone.parentID = balancedChild.children[1].id
+					balancedChild.children[1].children.push(nodeClone)
 				}
 				// Branch right this time
-				else if (childClone.children[0].value > childClone.value) {
+				else if (balancedChild.children[0].value > balancedChild.value) {
 					// Insert nodeClone to grandchild
-					nodeClone.parentID = childClone.children[0].id
-					childClone.children[0].children.push(nodeClone)
-					newLines.push({ childID: nodeClone.id, parentID: childClone.children[0].id })
+					nodeClone.parentID = balancedChild.children[0].id
+					balancedChild.children[0].children.push(nodeClone)
 				}
 				// Branch left again
 				else {
 					// Insert nodeClone to the right
 					nodeClone.parentID = balancedChild.id
-					childClone.children.push(nodeClone)
-					newLines.push({ childID: nodeClone.id, parentID: balancedChild.id })
+					balancedChild.children.push(nodeClone)
 				}
 			}
 
-			return avlBalance(childClone, newLines, lineCallbackFn)
+			return avlBalance(balancedChild)
 		}
 		// No rotation needed
 		else {
-			lineCallbackFn(lines)
 			return node
 		}
 	} else if (node.children.length === 2) {
 		// Balance each subtree
-		const balancedLeftChild = avlBalance(node.children[0], lines, lineCallbackFn)
-		const balancedRightChild = avlBalance(node.children[1], lines, lineCallbackFn)
+		const balancedLeftChild = avlBalance(node.children[0])
+		const balancedRightChild = avlBalance(node.children[1])
 		const nodeClone = JSON.parse(JSON.stringify(node))
 
-		nodeClone.children = [balancedLeftChild, balancedRightChild]
+		// Left heavy
+		if (getTreeHeight(balancedLeftChild) - getTreeHeight(balancedRightChild) > 1) {
+			balancedLeftChild.parentID = node.parentID
+			nodeClone.children = nodeClone.children.filter(child => child.id !== balancedLeftChild.id)
 
-		lineCallbackFn(lines)
-		return nodeClone
+			return avlBalance(bstInsert(balancedLeftChild, null, null, 0, nodeClone))
+		}
+		// Right heavy
+		else if (getTreeHeight(balancedRightChild) - getTreeHeight(balancedLeftChild) > 1) {
+			balancedRightChild.parentID = node.parentID
+			nodeClone.children = nodeClone.children.filter(child => child.id !== balancedRightChild.id)
+			console.error(JSON.stringify(nodeClone))
+
+			const inserted = bstInsert(balancedRightChild, null, null, 0, nodeClone)
+			return avlBalance(inserted)
+		}
+		// Just right
+		else {
+			nodeClone.children = [balancedLeftChild, balancedRightChild]
+			return nodeClone
+		}
 	}
+}
+
+export const generateLines = node => {
+	return node.children.reduce((rsf, child) => [...rsf, { parentID: node.id, childID: child.id }, ...generateLines(child)], [])
 }

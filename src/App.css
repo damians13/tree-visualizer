@@ -36,9 +36,11 @@ svg {
 	transition: all 0.15s ease-out;
 	z-index: "1";
 	user-select: none;
+	background-color: lightslategray;
+	opacity: 50%;
 }
 .handle:hover {
-	background-color: lightslategray;
+	opacity: 100%;
 }
 .handle:active {
 	background-color: transparent;

@@ -22,8 +22,10 @@ const Tree = () => {
 
 			setNodes([newNode])
 		} else {
-			const newNodes = Utils.bstInsert(nodes[0], value, lines, setLines)
-			setNodes([newNodes])
+			const newNode = Utils.bstInsert(nodes[0], value)
+
+			setNodes([newNode])
+			setLines(Utils.generateLines(newNode))
 		}
 	}
 
@@ -36,7 +38,26 @@ const Tree = () => {
 			setNodes([newNode])
 		} else {
 			// This function updates nodes and has a callback to setLines, so there is no need to call setNodes
-			Utils.binaryInsert(nodes[0], value, lines, setLines)
+			const newNode = Utils.binaryInsert(nodes[0], value)
+
+			setNodes([newNode])
+			setLines(Utils.generateLines(newNode))
+		}
+	}
+
+	const insertAVLNode = value => {
+		if (nodes.length === 0) {
+			let newNode = { value: value, id: Math.random(), children: [], parentID: null }
+			newNode.topOffset = 40
+			newNode.leftOffset = (document.getElementById("treeView").clientWidth - 25) / 2
+
+			setNodes([newNode])
+		} else {
+			const inserted = Utils.bstInsert(nodes[0], value)
+			const newNode = Utils.avlBalance(inserted)
+
+			setNodes([newNode])
+			setLines(Utils.generateLines(newNode))
 		}
 	}
 
@@ -116,6 +137,8 @@ const Tree = () => {
 			insertBSTNode(+inputText)
 		} else if (viewMode === "binary") {
 			insertBinaryNode(+inputText)
+		} else if (viewMode === "avl") {
+			insertAVLNode(+inputText)
 		} else if (viewMode === "custom") {
 			insertCustomNode(+inputText)
 		}

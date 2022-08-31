@@ -1,4 +1,4 @@
-import { avlBalance, binaryInsert, bstInsert, getTreeHeight, searchTreeForID } from "./TreeUtils"
+import { avlBalance, binaryInsert, bstInsert, generateLines, getTreeHeight, searchTreeForID } from "./TreeUtils"
 
 // bstInsert tests
 // No child test
@@ -10,9 +10,7 @@ test("inserts node in single node bst", () => {
 			children: [],
 			parentID: null,
 		},
-		4,
-		[],
-		() => {}
+		4
 	)
 
 	expect(node).toBeInstanceOf(Object)
@@ -38,7 +36,7 @@ test("duplicate nodes are not inserted in bsts", () => {
 		children: [],
 		parentID: null,
 	}
-	expect(bstInsert(singleNode, 3, [], () => {})).toStrictEqual(singleNode)
+	expect(bstInsert(singleNode, 3)).toStrictEqual(singleNode)
 
 	// Recursive test
 	const id = Math.random()
@@ -57,7 +55,7 @@ test("duplicate nodes are not inserted in bsts", () => {
 		leftOffset: undefined,
 		parentID: null,
 	}
-	expect(bstInsert(nodeOneChild, 4, [], () => {})).toStrictEqual(nodeOneChild)
+	expect(bstInsert(nodeOneChild, 4)).toStrictEqual(nodeOneChild)
 
 	// Double child tests
 	const duplicateDoubleChild = {
@@ -77,13 +75,11 @@ test("duplicate nodes are not inserted in bsts", () => {
 				parentID: id,
 			},
 		],
-		topOffset: undefined,
-		leftOffset: undefined,
 		parentID: null,
 	}
-	expect(bstInsert(duplicateDoubleChild, 2, [], () => {})).toStrictEqual(duplicateDoubleChild)
-	expect(bstInsert(duplicateDoubleChild, 4, [], () => {})).toStrictEqual(duplicateDoubleChild)
-	expect(bstInsert(duplicateDoubleChild, 6, [], () => {})).toStrictEqual(duplicateDoubleChild)
+	expect(bstInsert(duplicateDoubleChild, 2)).toEqual(duplicateDoubleChild)
+	expect(bstInsert(duplicateDoubleChild, 4)).toEqual(duplicateDoubleChild)
+	expect(bstInsert(duplicateDoubleChild, 6)).toEqual(duplicateDoubleChild)
 })
 
 // Single child tests
@@ -104,9 +100,7 @@ test("inserts higher node as second child in bst with one lesser subnode", () =>
 			],
 			parentID: null,
 		},
-		4,
-		[],
-		() => {}
+		4
 	)
 
 	expect(node).toBeInstanceOf(Object)
@@ -141,9 +135,7 @@ test("inserts highest node on bst with higher child", () => {
 				},
 			],
 		},
-		5,
-		[],
-		() => {}
+		5
 	)
 
 	expect(node).toBeInstanceOf(Object)
@@ -179,9 +171,7 @@ test("inserts lower node as first child in bst with one greater subnode", () => 
 				},
 			],
 		},
-		2,
-		[],
-		() => {}
+		2
 	)
 
 	expect(node).toBeInstanceOf(Object)
@@ -216,9 +206,7 @@ test("inserts lowest node on bst with lower child", () => {
 				},
 			],
 		},
-		1,
-		[],
-		() => {}
+		1
 	)
 
 	expect(node).toBeInstanceOf(Object)
@@ -261,9 +249,7 @@ test("two child left insert left child", () => {
 				},
 			],
 		},
-		1,
-		[],
-		() => {}
+		1
 	)
 
 	expect(node).toBeInstanceOf(Object)
@@ -310,9 +296,7 @@ test("two child right insert left child", () => {
 				},
 			],
 		},
-		3,
-		[],
-		() => {}
+		3
 	)
 
 	expect(node).toBeInstanceOf(Object)
@@ -359,9 +343,7 @@ test("two child left insert right child", () => {
 				},
 			],
 		},
-		5,
-		[],
-		() => {}
+		5
 	)
 
 	expect(node).toBeInstanceOf(Object)
@@ -408,9 +390,7 @@ test("two child right insert right child", () => {
 				},
 			],
 		},
-		7,
-		[],
-		() => {}
+		7
 	)
 
 	expect(node).toBeInstanceOf(Object)
@@ -448,21 +428,21 @@ test("binary insert single node", () => {
 		children: [],
 		parentID: null,
 	}
-	binaryInsert(node, 4, [], () => {})
+	const output = binaryInsert(node, 4, [], () => {})
 
-	expect(node).toBeInstanceOf(Object)
-	expect(node.value).toBe(3)
-	expect(node.id).toBeDefined
-	expect(node.children).toBeInstanceOf(Array)
-	expect(node.children.length).toBe(1)
-	expect(node.parentID).toBeNull()
+	expect(output).toBeInstanceOf(Object)
+	expect(output.value).toBe(3)
+	expect(output.id).toBeDefined
+	expect(output.children).toBeInstanceOf(Array)
+	expect(output.children.length).toBe(1)
+	expect(output.parentID).toBeNull()
 
-	const child = node.children[0]
+	const child = output.children[0]
 	expect(child).toBeInstanceOf(Object)
 	expect(child.value).toBe(4)
 	expect(child.id).toBeDefined()
 	expect(child.children).toStrictEqual([])
-	expect(child.parentID).toBe(node.id)
+	expect(child.parentID).toBe(output.id)
 })
 // Compounding test
 test("binary insert compounding tests", () => {
@@ -481,46 +461,46 @@ test("binary insert compounding tests", () => {
 		parentID: null,
 	}
 	// First insertion
-	binaryInsert(node, 4, [], () => {})
+	const output1 = binaryInsert(node, 4, [], () => {})
 
-	expect(node).toBeInstanceOf(Object)
-	expect(node.value).toBe(3)
-	expect(node.id).toBeDefined()
-	expect(node.children).toBeInstanceOf(Array)
-	expect(node.children.length).toBe(2)
-	expect(node.parentID).toBeNull()
+	expect(output1).toBeInstanceOf(Object)
+	expect(output1.value).toBe(3)
+	expect(output1.id).toBeDefined()
+	expect(output1.children).toBeInstanceOf(Array)
+	expect(output1.children.length).toBe(2)
+	expect(output1.parentID).toBeNull()
 
-	let firstChild = node.children[0]
+	let firstChild = output1.children[0]
 	expect(firstChild).toBeInstanceOf(Object)
 	expect(firstChild.value).toBe(45)
 	expect(firstChild.id).toBeDefined()
 	expect(firstChild.children).toStrictEqual([])
-	expect(firstChild.parentID).toBe(node.id)
+	expect(firstChild.parentID).toBe(output1.id)
 
-	let secondChild = node.children[1]
+	let secondChild = output1.children[1]
 	expect(secondChild).toBeInstanceOf(Object)
 	expect(secondChild.value).toBe(4)
 	expect(secondChild.id).toBeDefined()
 	expect(secondChild.children).toStrictEqual([])
-	expect(secondChild.parentID).toBe(node.id)
+	expect(secondChild.parentID).toBe(output1.id)
 
 	// Second insertion
-	binaryInsert(node, 6, [], () => {})
+	const output2 = binaryInsert(output1, 6, [], () => {})
 
-	expect(node).toBeInstanceOf(Object)
-	expect(node.value).toBe(3)
-	expect(node.id).toBeDefined()
-	expect(node.children).toBeInstanceOf(Array)
-	expect(node.children.length).toBe(2)
-	expect(node.parentID).toBeNull()
+	expect(output2).toBeInstanceOf(Object)
+	expect(output2.value).toBe(3)
+	expect(output2.id).toBeDefined()
+	expect(output2.children).toBeInstanceOf(Array)
+	expect(output2.children.length).toBe(2)
+	expect(output2.parentID).toBeNull()
 
-	firstChild = node.children[0]
+	firstChild = output2.children[0]
 	expect(firstChild).toBeInstanceOf(Object)
 	expect(firstChild.value).toBe(45)
 	expect(firstChild.id).toBeDefined()
 	expect(firstChild.children).toBeInstanceOf(Array)
 	expect(firstChild.children.length).toBe(1)
-	expect(firstChild.parentID).toBe(node.id)
+	expect(firstChild.parentID).toBe(output2.id)
 
 	let firstGrandChild = firstChild.children[0]
 	expect(firstGrandChild).toBeInstanceOf(Object)
@@ -529,24 +509,24 @@ test("binary insert compounding tests", () => {
 	expect(firstGrandChild.children).toStrictEqual([])
 	expect(firstGrandChild.parentID).toBe(firstChild.id)
 
-	secondChild = node.children[1]
+	secondChild = output2.children[1]
 	expect(secondChild).toBeInstanceOf(Object)
 	expect(secondChild.value).toBe(4)
 	expect(secondChild.id).toBeDefined()
 	expect(secondChild.children).toStrictEqual([])
-	expect(secondChild.parentID).toBe(node.id)
+	expect(secondChild.parentID).toBe(output2.id)
 
 	// Third insertion
-	binaryInsert(node, 6, [], () => {})
+	const output3 = binaryInsert(output2, 6, [], () => {})
 
-	expect(node).toBeInstanceOf(Object)
-	expect(node.value).toBe(3)
-	expect(node.id).toBeDefined()
-	expect(node.children).toBeInstanceOf(Array)
-	expect(node.children.length).toBe(2)
-	expect(node.parentID).toBeNull()
+	expect(output3).toBeInstanceOf(Object)
+	expect(output3.value).toBe(3)
+	expect(output3.id).toBeDefined()
+	expect(output3.children).toBeInstanceOf(Array)
+	expect(output3.children.length).toBe(2)
+	expect(output3.parentID).toBeNull()
 
-	firstChild = node.children[0]
+	firstChild = output3.children[0]
 	expect(firstChild).toBeInstanceOf(Object)
 	expect(firstChild.value).toBe(45)
 	expect(firstChild.id).toBeDefined()
@@ -568,12 +548,12 @@ test("binary insert compounding tests", () => {
 	expect(secondGrandChild.children).toStrictEqual([])
 	expect(secondGrandChild.parentID).toBe(firstChild.id)
 
-	secondChild = node.children[1]
+	secondChild = output3.children[1]
 	expect(secondChild).toBeInstanceOf(Object)
 	expect(secondChild.value).toBe(4)
 	expect(secondChild.id).toBeDefined()
 	expect(secondChild.children).toStrictEqual([])
-	expect(secondChild.parentID).toBe(node.id)
+	expect(secondChild.parentID).toBe(output3.id)
 })
 // Complex test
 test("binary insert complex test", () => {
@@ -581,7 +561,7 @@ test("binary insert complex test", () => {
 	const id2 = Math.random()
 	const id3 = Math.random()
 	const id4 = Math.random()
-	let three = {
+	let node = {
 		value: 3,
 		id: id1,
 		children: [
@@ -627,7 +607,7 @@ test("binary insert complex test", () => {
 		],
 		parentID: null,
 	}
-	binaryInsert(three, 6, [], () => {})
+	const three = binaryInsert(node, 6, [], () => {})
 
 	expect(three).toBeInstanceOf(Object)
 	expect(three.value).toBe(3)
@@ -825,7 +805,7 @@ test("avlBalance single node", () => {
 		children: [],
 		parentID: null,
 	}
-	expect(avlBalance(node, [], () => {})).toBe(node)
+	expect(avlBalance(node)).toBe(node)
 })
 // Proper trees, no rotation required
 test("avlBalance proper trees", () => {
@@ -853,7 +833,7 @@ test("avlBalance proper trees", () => {
 			},
 		],
 	}
-	expect(avlBalance(node1, [], () => {})).toStrictEqual(node1)
+	expect(avlBalance(node1)).toStrictEqual(node1)
 
 	const node2 = {
 		value: 6,
@@ -873,7 +853,7 @@ test("avlBalance proper trees", () => {
 			},
 		],
 	}
-	expect(avlBalance(node2, [], () => {})).toStrictEqual(node2)
+	expect(avlBalance(node2)).toStrictEqual(node2)
 
 	const node3 = {
 		value: 6,
@@ -899,7 +879,7 @@ test("avlBalance proper trees", () => {
 			},
 		],
 	}
-	expect(avlBalance(node3, [], () => {})).toStrictEqual(node3)
+	expect(avlBalance(node3)).toStrictEqual(node3)
 })
 // Unbalanced right->right
 test("avlBalance right -> right", () => {
@@ -921,7 +901,7 @@ test("avlBalance right -> right", () => {
 		parentID: superID,
 	}
 
-	const seven = avlBalance(node, [], () => {})
+	const seven = avlBalance(node)
 	expect(seven).toBeInstanceOf(Object)
 	expect(seven.value).toBe(7)
 	expect(seven.id).toBe(id2)
@@ -963,7 +943,7 @@ test("avlBalance right -> left", () => {
 		parentID: superID,
 	}
 
-	const seven = avlBalance(node, [], () => {})
+	const seven = avlBalance(node)
 	expect(seven).toBeInstanceOf(Object)
 	expect(seven.value).toBe(7)
 	expect(seven.id).toBe(id3)
@@ -1005,7 +985,7 @@ test("avlBalance left -> left", () => {
 		parentID: superID,
 	}
 
-	const seven = avlBalance(node, [], () => {})
+	const seven = avlBalance(node)
 	expect(seven).toBeInstanceOf(Object)
 	expect(seven.value).toBe(7)
 	expect(seven.id).toBe(id2)
@@ -1047,7 +1027,7 @@ test("avlBalance left -> right", () => {
 		parentID: superID,
 	}
 
-	const seven = avlBalance(node, [], () => {})
+	const seven = avlBalance(node)
 	expect(seven).toBeInstanceOf(Object)
 	expect(seven.value).toBe(7)
 	expect(seven.id).toBe(id3)
@@ -1093,7 +1073,7 @@ test("avlBalance right -> double", () => {
 		parentID: superID,
 	}
 
-	const eight = avlBalance(node, [], () => {})
+	const eight = avlBalance(node)
 	expect(eight).toBeInstanceOf(Object)
 	expect(eight.value).toBe(8)
 	expect(eight.id).toBe(id2)
@@ -1147,7 +1127,7 @@ test("avlBalance left -> double", () => {
 		parentID: superID,
 	}
 
-	const four = avlBalance(node, [], () => {})
+	const four = avlBalance(node)
 	expect(four).toBeInstanceOf(Object)
 	expect(four.value).toBe(4)
 	expect(four.id).toBe(id2)
@@ -1176,4 +1156,135 @@ test("avlBalance left -> double", () => {
 	expect(six.id).toBe(id1)
 	expect(six.children).toStrictEqual([])
 	expect(six.parentID).toBe(five.id)
+})
+// Unbalanced deep right imbalance
+test("avlBalance deep right imbalance", () => {
+	const id1 = Math.random()
+	const id2 = Math.random()
+	const id3 = Math.random()
+	const id4 = Math.random()
+	const id5 = Math.random()
+	const id6 = Math.random()
+	const superID = Math.random()
+	const node = {
+		value: 2,
+		id: id1,
+		children: [
+			{ value: 1, id: id2, children: [], parentID: id1 },
+			{
+				value: 4,
+				id: id3,
+				children: [
+					{ value: 3, id: id4, children: [], parentID: id3 },
+					{ value: 5, id: id5, children: [{ value: 6, id: id6, children: [], parentID: id5 }], parentID: id3 },
+				],
+				parentID: id1,
+			},
+		],
+		parentID: superID,
+	}
+
+	const four = avlBalance(node)
+	expect(four).toBeInstanceOf(Object)
+	expect(four.value).toBe(4)
+	expect(four.id).toBe(id3)
+	expect(four.children).toBeInstanceOf(Array)
+	expect(four.children.length).toBe(2)
+	expect(four.parentID).toBe(superID)
+
+	const two = four.children[0]
+	expect(two).toBeInstanceOf(Object)
+	expect(two.value).toBe(2)
+	expect(two.id).toBe(id1)
+	expect(two.children).toBeInstanceOf(Array)
+	expect(two.children.length).toBe(2)
+	expect(two.parentID).toBe(four.id)
+
+	const one = two.children[0]
+	expect(one).toBeInstanceOf(Object)
+	expect(one.value).toBe(1)
+	expect(one.id).toBe(id2)
+	expect(one.children).toStrictEqual([])
+	expect(one.parentID).toBe(two.id)
+
+	const three = two.children[1]
+	expect(three).toBeInstanceOf(Object)
+	expect(three.value).toBe(3)
+	expect(three.id).toBe(id4)
+	expect(three.children).toStrictEqual([])
+	expect(three.parentID).toBe(two.id)
+
+	const five = four.children[1]
+	expect(five).toBeInstanceOf(Object)
+	expect(five.value).toBe(5)
+	expect(five.id).toBe(id5)
+	expect(five.children).toBeInstanceOf(Array)
+	expect(five.children.length).toBe(1)
+	expect(five.parentID).toBe(four.id)
+
+	const six = five.children[0]
+	expect(six).toBeInstanceOf(Object)
+	expect(six.value).toBe(6)
+	expect(six.id).toBe(id6)
+	expect(six.children).toStrictEqual([])
+	expect(six.parentID).toBe(five.id)
+})
+
+// Generate lines tests
+// Single node
+test("generateLines single node", () => {
+	const node = {
+		value: 6,
+		id: Math.random(),
+		children: [],
+		parentID: null,
+	}
+	expect(generateLines(node)).toStrictEqual([])
+})
+// One child
+test("generateLines single child", () => {
+	const id1 = Math.random()
+	const id2 = Math.random()
+	const node = {
+		value: 6,
+		id: id1,
+		children: [{ value: 5, id: id2, children: [], parentID: id1 }],
+		parentID: null,
+	}
+	expect(generateLines(node)).toStrictEqual([{ parentID: id1, childID: id2 }])
+})
+// Two children
+test("generateLines two children", () => {
+	const id1 = Math.random()
+	const id2 = Math.random()
+	const id3 = Math.random()
+	const node = {
+		value: 6,
+		id: id1,
+		children: [
+			{ value: 5, id: id2, children: [], parentID: id1 },
+			{ value: 7, id: id3, children: [], parentID: id1 },
+		],
+		parentID: null,
+	}
+	expect(generateLines(node)).toStrictEqual([
+		{ parentID: id1, childID: id2 },
+		{ parentID: id1, childID: id3 },
+	])
+})
+// Single recursion
+test("generateLines recursive", () => {
+	const id1 = Math.random()
+	const id2 = Math.random()
+	const id3 = Math.random()
+	const node = {
+		value: 5,
+		id: id1,
+		children: [{ value: 7, id: id2, children: [{ value: 6, id: id3, children: [], parentID: id2 }], parentID: id1 }, ,],
+		parentID: null,
+	}
+	expect(generateLines(node)).toStrictEqual([
+		{ parentID: id1, childID: id2 },
+		{ parentID: id2, childID: id3 },
+	])
 })
