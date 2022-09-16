@@ -1,6 +1,6 @@
 :root {
 	--bgcolour1: rgb(175, 196, 215);
-	--bgcolour2: rgb(158, 178, 196);
+	--bgcolour2: rgb(141, 159, 175);
 	--fgcolour: lightslategray;
 	--darkshadow: rgb(82, 95, 108);
 	--lightshadow: rgb(152, 175, 198);
@@ -32,6 +32,10 @@ svg {
 	width: 100%;
 }
 
+li {
+	margin-bottom: 20px;
+}
+
 #root {
 	display: flex;
 	height: 95%;
@@ -57,10 +61,14 @@ svg {
 	margin: 5px;
 	border-radius: 5px;
 	background-color: var(--fgcolour);
-	height: 95%;
-	top: 2%;
+	height: 87vh;
+	width: 97%;
+	top: 1vh;
 	position: relative;
 	box-shadow: 2px 2px 5px var(--darkshadow), -2px -2px 5px var(--lightshadow);
+}
+#innerStatsPanel > div > p {
+	padding: 8px 8px 0px 8px;
 }
 
 #input,
@@ -68,6 +76,10 @@ svg {
 	margin-left: 5px;
 	margin-right: 5px;
 	z-index: 1;
+}
+
+::placeholder {
+	color: var(--textcolour);
 }
 
 #topBarBackground {

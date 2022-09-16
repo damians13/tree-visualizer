@@ -38,7 +38,7 @@ const App = () => {
 					setViewMode={setViewMode}
 				/>
 			</div>
-			<StatsPanel />
+			<StatsPanel viewMode={viewMode} />
 		</DndProvider>
 	)
 }

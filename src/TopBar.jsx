@@ -10,12 +10,16 @@ const TopBar = props => {
 
 	const handleInputChange = e => {
 		// Verify input is numeric before accepting update
-		const inputRegex = /(?:\d+(?:\.\d*)?)?/
+		const inputRegex = /(?:-?\d*(?:\.\d*)?)?/
 		const matches = e.target.value.match(inputRegex)
 
 		if (matches !== null && e.target.value.length === matches[0].length) {
 			setInputText(e.target.value)
 		}
+	}
+
+	const handleKeyDown = e => {
+		if (e.code === "Enter") handleInsertClick()
 	}
 
 	const insertBSTNode = value => {
@@ -128,7 +132,7 @@ const TopBar = props => {
 	}
 
 	const handleInsertClick = () => {
-		if (inputText === "") return
+		if (inputText === "" || inputText === "-") return
 
 		// Update the tree nodes
 		if (props.viewMode === "bst") {
@@ -150,23 +154,25 @@ const TopBar = props => {
 				<input
 					className="topRow"
 					onChange={handleInputChange}
+					onKeyDown={handleKeyDown}
 					value={inputText}
+					placeholder="Enter node value (ex. 4, 53)"
 				/>
 				<button className="topRow" onClick={handleInsertClick}>
 					Insert
 				</button>
 			</div>
-			<button className="topRow">Search</button>
+			<button className="topRow">Breadth-first search</button>
+			<button className="topRow">Depth-first search</button>
 			<select
 				name="treeMode"
 				value={props.viewMode}
 				onChange={handleViewModeChange}
 				className="topRow"
 			>
-				<option value="redblack">Tree format: Red-Black</option>
 				<option value="avl">Tree format: AVL</option>
-				<option value="bst">Tree format: BST</option>
 				<option value="binary">Tree format: Binary</option>
+				<option value="bst">Tree format: BST</option>
 				<option value="custom">Tree format: Custom</option>
 			</select>
 		</div>
