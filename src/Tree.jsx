@@ -170,7 +170,7 @@ const Tree = props => {
 							y1={lineInProgress.src.topOffset + 12}
 							x2={lineInProgress.mouseX}
 							y2={lineInProgress.mouseY}
-							className="line"
+							className="line inProgress"
 							key={"mouse-drag-" + lineInProgress.src.id}
 						/>
 					)}

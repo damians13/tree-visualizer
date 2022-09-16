@@ -1,12 +1,31 @@
+:root {
+	--bgcolour1: rgb(175, 196, 215);
+	--bgcolour2: rgb(158, 178, 196);
+	--fgcolour: lightslategray;
+	--darkshadow: rgb(82, 95, 108);
+	--lightshadow: rgb(152, 175, 198);
+	--textcolour: rgb(220, 234, 249);
+}
+
 html,
 body {
 	overflow: hidden;
 	margin: 0;
-	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto",
-		"Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans",
-		"Helvetica Neue", sans-serif;
+	font-family: Ubuntu, "times new roman", times, roman, serif;
+	font-size: 18px;
+	color: var(--textcolour);
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
+	height: 100%;
+	background: linear-gradient(var(--bgcolour1), var(--bgcolour2));
+}
+
+input,
+select,
+button {
+	font-family: Ubuntu, "times new roman", times, roman, serif;
+	font-size: 18px;
+	color: var(--textcolour);
 }
 
 svg {
@@ -15,6 +34,7 @@ svg {
 
 #root {
 	display: flex;
+	height: 95%;
 }
 #root > * {
 	width: 100%;
@@ -29,6 +49,38 @@ svg {
 	right: 50%;
 }
 
+#statsPanel {
+	flex: 50%;
+}
+
+#innerStatsPanel {
+	margin: 5px;
+	border-radius: 5px;
+	background-color: var(--fgcolour);
+	height: 95%;
+	top: 2%;
+	position: relative;
+	box-shadow: 2px 2px 5px var(--darkshadow), -2px -2px 5px var(--lightshadow);
+}
+
+#input,
+#input > * {
+	margin-left: 5px;
+	margin-right: 5px;
+	z-index: 1;
+}
+
+#topBarBackground {
+	flex: 0%;
+	background-color: var(--fgcolour);
+	box-shadow: 0px 2px 5px var(--darkshadow);
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	height: 40px;
+	width: 100%;
+}
+
 .handle {
 	border-radius: 16px;
 	height: 16px;
@@ -38,7 +90,8 @@ svg {
 	transition: all 0.15s ease-out;
 	z-index: "1";
 	user-select: none;
-	background-color: lightslategray;
+	background-color: var(--fgcolour);
+	box-shadow: 2px 2px 5px var(--darkshadow), -2px -2px 5px var(--lightshadow);
 	opacity: 50%;
 }
 .handle:hover {
@@ -46,6 +99,8 @@ svg {
 }
 .handle:active {
 	background-color: transparent;
+	box-shadow: none;
+	transition-duration: 0s;
 }
 .handle.top {
 	border-bottom-left-radius: 0px;
@@ -59,29 +114,80 @@ svg {
 }
 
 .line {
-	stroke: lightslategray;
+	stroke: var(--fgcolour);
 	stroke-width: 8;
+	transition: all 0.15s ease-out;
+	opacity: 50%;
+}
+.line:hover {
+	opacity: 75%;
+}
+.line.inProgress,
+.line:active {
+	opacity: 100%;
 }
 
 .nodeText {
-	background-color: aqua;
+	background-color: var(--fgcolour);
 	user-select: none;
-	height: 25px;
-	width: 50px;
+	min-height: 25px;
+	min-width: 50px;
+	padding: 0px 5px;
 	display: flex;
 	align-items: center;
 	justify-content: center;
 	border-radius: 5px;
-	border: 1px solid black;
 	margin: 0px;
 	position: relative;
 	top: 0px;
+	transition: all 0.15s ease-out;
+	box-shadow: 2px 2px 5px var(--darkshadow), -2px -2px 5px var(--lightshadow);
+}
+.nodeText:hover {
+	box-shadow: 2px 2px 5px var(--darkshadow), -2px -2px 5px var(--lightshadow),
+		inset 1px 1px 7px var(--lightshadow),
+		inset -1px -1px 7px var(--darkshadow);
+}
+.nodeText:active {
+	box-shadow: 2px 2px 5px var(--darkshadow), -2px -2px 5px var(--lightshadow),
+		inset 2px 2px 5px var(--darkshadow),
+		inset -2px -2px 5px var(--lightshadow);
 }
 
 .topBar {
-	background-color: lightslategray;
-	height: 25px;
+	min-height: 40px;
+	height: 40px;
 	width: 100%;
+	display: flex;
+	justify-content: space-evenly;
+	align-items: center;
+}
+
+.topRow {
+	border-radius: 5px;
+	overflow: hidden;
+	background-color: var(--fgcolour);
+	border: 0px;
+	box-shadow: 2px 2px 5px var(--darkshadow), -2px -2px 5px var(--lightshadow);
+	user-select: none;
+	transition: all 0.15s ease-out;
+	z-index: 1;
+}
+input.topRow {
+	height: 25px;
+}
+.topRow:focus {
+	outline: none;
+}
+.topRow:hover {
+	box-shadow: 2px 2px 5px var(--darkshadow), -2px -2px 5px var(--lightshadow),
+		inset 1px 1px 7px var(--lightshadow),
+		inset -1px -1px 7px var(--darkshadow);
+}
+.topRow:active {
+	box-shadow: 2px 2px 5px var(--darkshadow), -2px -2px 5px var(--lightshadow),
+		inset 2px 2px 5px var(--darkshadow),
+		inset -2px -2px 5px var(--lightshadow);
 }
 
 .node {
@@ -89,4 +195,8 @@ svg {
 	flex-direction: column;
 	align-items: center;
 	position: absolute;
+	pointer-events: none;
+}
+.node > * {
+	pointer-events: auto;
 }

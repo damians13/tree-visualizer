@@ -146,13 +146,22 @@ const TopBar = props => {
 
 	return (
 		<div className="topBar">
-			<input onChange={handleInputChange} value={inputText} />
-			<button onClick={handleInsertClick}>Insert</button>
-			<button>Search</button>
+			<div id="input">
+				<input
+					className="topRow"
+					onChange={handleInputChange}
+					value={inputText}
+				/>
+				<button className="topRow" onClick={handleInsertClick}>
+					Insert
+				</button>
+			</div>
+			<button className="topRow">Search</button>
 			<select
 				name="treeMode"
 				value={props.viewMode}
 				onChange={handleViewModeChange}
+				className="topRow"
 			>
 				<option value="redblack">Tree format: Red-Black</option>
 				<option value="avl">Tree format: AVL</option>
