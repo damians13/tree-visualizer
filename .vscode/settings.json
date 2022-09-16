@@ -1,1 +1,4 @@
-{}
+{
+	"prettier.bracketSpacing": true,
+	"prettier.printWidth": 80
+}

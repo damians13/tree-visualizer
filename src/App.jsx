@@ -1,8 +1,9 @@
 import "./App.css"
 import Tree from "./Tree"
+import TopBar from "./TopBar"
 import { DndProvider } from "react-dnd"
 import { HTML5Backend } from "react-dnd-html5-backend"
-import React from "react"
+import React, { useState } from "react"
 
 export const DragTypes = {
 	NODE: "node",
@@ -11,9 +12,30 @@ export const DragTypes = {
 }
 
 const App = () => {
+	const [nodes, setNodes] = useState([])
+	const [lines, setLines] = useState([])
+	const [viewMode, setViewMode] = useState("bst")
+
 	return (
 		<DndProvider backend={HTML5Backend}>
-			<Tree />
+			<div>
+				<TopBar
+					nodes={nodes}
+					setNodes={setNodes}
+					lines={lines}
+					setLines={setLines}
+					viewMode={viewMode}
+					setViewMode={setViewMode}
+				/>
+				<Tree
+					nodes={nodes}
+					setNodes={setNodes}
+					lines={lines}
+					setLines={setLines}
+					viewMode={viewMode}
+					setViewMode={setViewMode}
+				/>
+			</div>
 			<CodeViewer />
 		</DndProvider>
 	)

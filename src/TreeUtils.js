@@ -56,7 +56,13 @@ export const searchNodesAndRemoveById = (nodes, id) => {
  * @returns {Node[]} an array containing every node in the tree in one dimension
  */
 export const flattenTree = node => {
-	return [node, ...node.children.reduce((rsf, child) => [...rsf, ...flattenTree(child)], [])]
+	return [
+		node,
+		...node.children.reduce(
+			(rsf, child) => [...rsf, ...flattenTree(child)],
+			[]
+		),
+	]
 }
 
 /**
@@ -69,7 +75,10 @@ export const getTreeHeight = (node, row = 1) => {
 	if (node.children.length === 0) {
 		return row
 	} else {
-		return node.children.reduce((rsf, child) => Math.max(rsf, getTreeHeight(child, row + 1)), 0)
+		return node.children.reduce(
+			(rsf, child) => Math.max(rsf, getTreeHeight(child, row + 1)),
+			0
+		)
 	}
 }
 
@@ -98,13 +107,22 @@ export const bstInsert = (
 	value,
 	parentID = null,
 	depth = 0,
-	newNode = { value: value, id: Math.random(), children: [], parentID: parentID, topOffset: node.topOffset + 40, leftOffset: node.leftOffset }
+	newNode = {
+		value: value,
+		id: Math.random(),
+		children: [],
+		parentID: parentID,
+		topOffset: node.topOffset + 40,
+		leftOffset: node.leftOffset,
+	}
 ) => {
 	let treeViewBox
 	if (document.getElementById("treeView") === null) {
 		treeViewBox = { top: 0, bottom: 0, left: 0, right: 0 }
 	} else {
-		treeViewBox = document.getElementById("treeView").getBoundingClientRect()
+		treeViewBox = document
+			.getElementById("treeView")
+			.getBoundingClientRect()
 	}
 
 	const nodeClone = JSON.parse(JSON.stringify(node))
@@ -116,11 +134,25 @@ export const bstInsert = (
 	if (nodeClone.children.length === 0) {
 		newNode.parentID = node.id
 		if (value > node.value) {
-			newNode.leftOffset = dimensionClamp(node.leftOffset + INITIAL_OFFSET_WIDTH / SCALING_FACTOR ** depth, treeViewBox.left, treeViewBox.right - 50)
+			newNode.leftOffset = dimensionClamp(
+				node.leftOffset +
+					INITIAL_OFFSET_WIDTH / SCALING_FACTOR ** depth,
+				treeViewBox.left,
+				treeViewBox.right - 50
+			)
 		} else {
-			newNode.leftOffset = dimensionClamp(node.leftOffset - INITIAL_OFFSET_WIDTH / SCALING_FACTOR ** depth, treeViewBox.left, treeViewBox.right - 50)
+			newNode.leftOffset = dimensionClamp(
+				node.leftOffset -
+					INITIAL_OFFSET_WIDTH / SCALING_FACTOR ** depth,
+				treeViewBox.left,
+				treeViewBox.right - 50
+			)
 		}
-		newNode.topOffset = dimensionClamp(node.topOffset + INITIAL_OFFSET_HEIGHT, treeViewBox.top - 25, treeViewBox.bottom - 50)
+		newNode.topOffset = dimensionClamp(
+			node.topOffset + INITIAL_OFFSET_HEIGHT,
+			treeViewBox.top - 25,
+			treeViewBox.bottom - 50
+		)
 
 		return {
 			value: node.value,
@@ -139,16 +171,41 @@ export const bstInsert = (
 		// Insert to right on this node
 		if (child.value < node.value && node.value < newNode.value) {
 			newNode.parentID = node.id
-			newNode.leftOffset = dimensionClamp(node.leftOffset + INITIAL_OFFSET_WIDTH / SCALING_FACTOR ** depth, treeViewBox.left, treeViewBox.right - 50)
-			newNode.topOffset = dimensionClamp(node.topOffset + INITIAL_OFFSET_HEIGHT, treeViewBox.top - 25, treeViewBox.bottom - 50)
+			newNode.leftOffset = dimensionClamp(
+				node.leftOffset +
+					INITIAL_OFFSET_WIDTH / SCALING_FACTOR ** depth,
+				treeViewBox.left,
+				treeViewBox.right - 50
+			)
+			newNode.topOffset = dimensionClamp(
+				node.topOffset + INITIAL_OFFSET_HEIGHT,
+				treeViewBox.top - 25,
+				treeViewBox.bottom - 50
+			)
 
-			return { value: node.value, id: node.id, children: [child, newNode], parentID: node.parentID, topOffset: node.topOffset, leftOffset: node.leftOffset }
+			return {
+				value: node.value,
+				id: node.id,
+				children: [child, newNode],
+				parentID: node.parentID,
+				topOffset: node.topOffset,
+				leftOffset: node.leftOffset,
+			}
 		}
 		// Insert to left on this node
 		else if (newNode.value < node.value && node.value < child.value) {
 			newNode.parentID = node.id
-			newNode.leftOffset = dimensionClamp(node.leftOffset - INITIAL_OFFSET_WIDTH / SCALING_FACTOR ** depth, treeViewBox.left, treeViewBox.right - 50)
-			newNode.topOffset = dimensionClamp(node.topOffset + INITIAL_OFFSET_HEIGHT, treeViewBox.top - 25, treeViewBox.bottom - 50)
+			newNode.leftOffset = dimensionClamp(
+				node.leftOffset -
+					INITIAL_OFFSET_WIDTH / SCALING_FACTOR ** depth,
+				treeViewBox.left,
+				treeViewBox.right - 50
+			)
+			newNode.topOffset = dimensionClamp(
+				node.topOffset + INITIAL_OFFSET_HEIGHT,
+				treeViewBox.top - 25,
+				treeViewBox.bottom - 50
+			)
 
 			return {
 				value: node.value,
@@ -164,7 +221,9 @@ export const bstInsert = (
 			return {
 				value: node.value,
 				id: node.id,
-				children: [bstInsert(child, value, node.id, depth + 1, newNode, true)],
+				children: [
+					bstInsert(child, value, node.id, depth + 1, newNode, true),
+				],
 				parentID: node.parentID,
 				topOffset: node.topOffset,
 				leftOffset: node.leftOffset,
@@ -191,7 +250,17 @@ export const bstInsert = (
 				return {
 					value: node.value,
 					id: node.id,
-					children: [firstChild, bstInsert(secondChild, value, node.id, depth + 1, newNode, true)],
+					children: [
+						firstChild,
+						bstInsert(
+							secondChild,
+							value,
+							node.id,
+							depth + 1,
+							newNode,
+							true
+						),
+					],
 					parentID: node.parentID,
 					topOffset: node.topOffset,
 					leftOffset: node.leftOffset,
@@ -200,7 +269,10 @@ export const bstInsert = (
 			return {
 				value: node.value,
 				id: node.id,
-				children: [firstChild, bstInsert(secondChild, value, node.id, depth + 1)],
+				children: [
+					firstChild,
+					bstInsert(secondChild, value, node.id, depth + 1),
+				],
 				parentID: node.parentID,
 				topOffset: node.topOffset,
 				leftOffset: node.leftOffset,
@@ -213,7 +285,17 @@ export const bstInsert = (
 				return {
 					value: node.value,
 					id: node.id,
-					children: [bstInsert(firstChild, value, node.id, depth + 1, newNode, true), secondChild],
+					children: [
+						bstInsert(
+							firstChild,
+							value,
+							node.id,
+							depth + 1,
+							newNode,
+							true
+						),
+						secondChild,
+					],
 					parentID: node.parentID,
 					topOffset: node.topOffset,
 					leftOffset: node.leftOffset,
@@ -222,7 +304,10 @@ export const bstInsert = (
 			return {
 				value: node.value,
 				id: node.id,
-				children: [bstInsert(firstChild, value, node.id, depth + 1), secondChild],
+				children: [
+					bstInsert(firstChild, value, node.id, depth + 1),
+					secondChild,
+				],
 				parentID: node.parentID,
 				topOffset: node.topOffset,
 				leftOffset: node.leftOffset,
@@ -250,7 +335,9 @@ export const binaryInsert = (node, value) => {
 	if (document.getElementById("treeView") === null) {
 		treeViewBox = { top: 0, bottom: 0, left: 0, right: 0 }
 	} else {
-		treeViewBox = document.getElementById("treeView").getBoundingClientRect()
+		treeViewBox = document
+			.getElementById("treeView")
+			.getBoundingClientRect()
 	}
 
 	let visited = []
@@ -268,7 +355,11 @@ export const binaryInsert = (node, value) => {
 
 		if (n.children.length < 2) {
 			newNode.parentID = n.id
-			newNode.topOffset = dimensionClamp(n.topOffset + INITIAL_OFFSET_HEIGHT, treeViewBox.top - 25, treeViewBox.bottom - 50)
+			newNode.topOffset = dimensionClamp(
+				n.topOffset + INITIAL_OFFSET_HEIGHT,
+				treeViewBox.top - 25,
+				treeViewBox.bottom - 50
+			)
 
 			// Find how deep in the tree we are inserting this node
 			let depth = 0
@@ -279,17 +370,34 @@ export const binaryInsert = (node, value) => {
 
 			// If no child is present, insert to the left
 			if (n.children.length === 0) {
-				newNode.leftOffset = dimensionClamp(n.leftOffset - INITIAL_OFFSET_WIDTH / SCALING_FACTOR ** (depth - 1), treeViewBox.left, treeViewBox.right - 50)
+				newNode.leftOffset = dimensionClamp(
+					n.leftOffset -
+						INITIAL_OFFSET_WIDTH / SCALING_FACTOR ** (depth - 1),
+					treeViewBox.left,
+					treeViewBox.right - 50
+				)
 			}
 			// One child, insertion side varies
 			else {
 				// Present child is to the right, insert to the left
 				if (n.children[0].leftOffset > n.leftOffset) {
-					newNode.leftOffset = dimensionClamp(n.leftOffset - INITIAL_OFFSET_WIDTH / SCALING_FACTOR ** (depth - 1), treeViewBox.left, treeViewBox.right - 50)
+					newNode.leftOffset = dimensionClamp(
+						n.leftOffset -
+							INITIAL_OFFSET_WIDTH /
+								SCALING_FACTOR ** (depth - 1),
+						treeViewBox.left,
+						treeViewBox.right - 50
+					)
 				}
 				// Present child is to the left, insert to the right
 				else {
-					newNode.leftOffset = dimensionClamp(n.leftOffset + INITIAL_OFFSET_WIDTH / SCALING_FACTOR ** (depth - 1), treeViewBox.left, treeViewBox.right - 50)
+					newNode.leftOffset = dimensionClamp(
+						n.leftOffset +
+							INITIAL_OFFSET_WIDTH /
+								SCALING_FACTOR ** (depth - 1),
+						treeViewBox.left,
+						treeViewBox.right - 50
+					)
 				}
 			}
 
@@ -317,7 +425,11 @@ export const binaryInsert = (node, value) => {
 export const searchTreeForID = (node, id) => {
 	if (node === undefined) return null
 	if (node.id === id) return node
-	else return node.children.reduce((rsf, child) => (rsf !== null ? rsf : searchTreeForID(child, id)), null)
+	else
+		return node.children.reduce(
+			(rsf, child) => (rsf !== null ? rsf : searchTreeForID(child, id)),
+			null
+		)
 }
 
 /**
@@ -346,7 +458,9 @@ export const avlBalance = node => {
 					balancedChild.children[0].children.push(nodeClone)
 				}
 				// Branch right again
-				else if (balancedChild.children[0].value > balancedChild.value) {
+				else if (
+					balancedChild.children[0].value > balancedChild.value
+				) {
 					// Insert nodeClone to the left
 					nodeClone.parentID = balancedChild.id
 					balancedChild.children.unshift(nodeClone)
@@ -367,7 +481,9 @@ export const avlBalance = node => {
 					balancedChild.children[1].children.push(nodeClone)
 				}
 				// Branch right this time
-				else if (balancedChild.children[0].value > balancedChild.value) {
+				else if (
+					balancedChild.children[0].value > balancedChild.value
+				) {
 					// Insert nodeClone to grandchild
 					nodeClone.parentID = balancedChild.children[0].id
 					balancedChild.children[0].children.push(nodeClone)
@@ -393,19 +509,38 @@ export const avlBalance = node => {
 		const nodeClone = JSON.parse(JSON.stringify(node))
 
 		// Left heavy
-		if (getTreeHeight(balancedLeftChild) - getTreeHeight(balancedRightChild) > 1) {
+		if (
+			getTreeHeight(balancedLeftChild) -
+				getTreeHeight(balancedRightChild) >
+			1
+		) {
 			balancedLeftChild.parentID = node.parentID
-			nodeClone.children = nodeClone.children.filter(child => child.id !== balancedLeftChild.id)
+			nodeClone.children = nodeClone.children.filter(
+				child => child.id !== balancedLeftChild.id
+			)
 
-			return avlBalance(bstInsert(balancedLeftChild, null, null, 0, nodeClone))
+			return avlBalance(
+				bstInsert(balancedLeftChild, null, null, 0, nodeClone)
+			)
 		}
 		// Right heavy
-		else if (getTreeHeight(balancedRightChild) - getTreeHeight(balancedLeftChild) > 1) {
+		else if (
+			getTreeHeight(balancedRightChild) -
+				getTreeHeight(balancedLeftChild) >
+			1
+		) {
 			balancedRightChild.parentID = node.parentID
-			nodeClone.children = nodeClone.children.filter(child => child.id !== balancedRightChild.id)
-			console.error(JSON.stringify(nodeClone))
+			nodeClone.children = nodeClone.children.filter(
+				child => child.id !== balancedRightChild.id
+			)
 
-			const inserted = bstInsert(balancedRightChild, null, null, 0, nodeClone)
+			const inserted = bstInsert(
+				balancedRightChild,
+				null,
+				null,
+				0,
+				nodeClone
+			)
 			return avlBalance(inserted)
 		}
 		// Just right
@@ -417,5 +552,12 @@ export const avlBalance = node => {
 }
 
 export const generateLines = node => {
-	return node.children.reduce((rsf, child) => [...rsf, { parentID: node.id, childID: child.id }, ...generateLines(child)], [])
+	return node.children.reduce(
+		(rsf, child) => [
+			...rsf,
+			{ parentID: node.id, childID: child.id },
+			...generateLines(child),
+		],
+		[]
+	)
 }
