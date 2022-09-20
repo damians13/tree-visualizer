@@ -36,6 +36,17 @@ li {
 	margin-bottom: 20px;
 }
 
+table {
+	position: absolute;
+	bottom: 5px;
+	left: 5px;
+	font-size: 16px;
+}
+
+th {
+	padding-right: 8px;
+}
+
 #root {
 	display: flex;
 	height: 95%;
@@ -67,8 +78,17 @@ li {
 	position: relative;
 	box-shadow: 2px 2px 5px var(--darkshadow), -2px -2px 5px var(--lightshadow);
 }
-#innerStatsPanel > div > p {
-	padding: 8px 8px 0px 8px;
+#innerStatsPanel > div > a {
+	position: relative;
+	top: 5px;
+	left: 5px;
+}
+a {
+	color: var(--textcolour);
+	text-decoration: none;
+}
+a:hover {
+	text-decoration: underline;
 }
 
 #input,
