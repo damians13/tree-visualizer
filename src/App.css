@@ -91,6 +91,8 @@ a:hover {
 	text-decoration: underline;
 }
 
+#traverse,
+#traverse > *,
 #input,
 #input > * {
 	margin-left: 5px;

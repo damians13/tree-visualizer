@@ -3,9 +3,28 @@ import * as Utils from "./TreeUtils"
 
 const TopBar = props => {
 	const [inputText, setInputText] = useState("")
+	const [traverseMode, setTraverseMode] = useState("")
+
+	// TODO
+	const preOrderTraversal = () => {}
+	//TODO
+	const inOrderTraversal = () => {}
+	//TODO
+	const postOrderTraversal = () => {}
+
+	const handleTraverseModeChange = e => {
+		setTraverseMode(e.target.value)
+	}
 
 	const handleViewModeChange = e => {
 		props.setViewMode(e.target.value)
+	}
+
+	const handleTraverseClick = e => {
+		if (traverseMode === "pre-order") preOrderTraversal()
+		else if (traverseMode === "in-order") inOrderTraversal()
+		else if (traverseMode === "post-order") postOrderTraversal()
+		else console.error("Invalid traverseMode: " + traverseMode)
 	}
 
 	const handleInputChange = e => {
@@ -162,8 +181,21 @@ const TopBar = props => {
 					Insert
 				</button>
 			</div>
-			<button className="topRow">Breadth-first search</button>
-			<button className="topRow">Depth-first search</button>
+			<div id="traverse">
+				<select
+					name="traverseMode"
+					value={traverseMode}
+					onChange={handleTraverseModeChange}
+					className="topRow"
+				>
+					<option value="pre-order">Pre-order traversal</option>
+					<option value="in-order">In-order traversal</option>
+					<option value="post-order">Post-order traversal</option>
+				</select>
+				<button className="topRow" onClick={handleTraverseClick}>
+					Traverse
+				</button>
+			</div>
 			<select
 				name="treeMode"
 				value={props.viewMode}
