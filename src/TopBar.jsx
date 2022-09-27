@@ -3,14 +3,140 @@ import * as Utils from "./TreeUtils"
 
 const TopBar = props => {
 	const [inputText, setInputText] = useState("")
-	const [traverseMode, setTraverseMode] = useState("")
+	const [traverseMode, setTraverseMode] = useState("pre-order")
 
-	// TODO
-	const preOrderTraversal = () => {}
+	const ANIMATION_TIMEOUT = 1000
+
+	const highlightPreVisitedNode = id => {
+		const nodeDiv = document.getElementById(id)
+		if (nodeDiv !== null) {
+			nodeDiv.children[1].firstChild.classList.add("pre-visit")
+		}
+	}
+	const highlightVisitedNode = id => {
+		const nodeDiv = document.getElementById(id)
+		if (nodeDiv !== null) {
+			nodeDiv.children[1].firstChild.classList.add("visit")
+		}
+	}
+
+	const unHighlightAllNodes = () => {
+		document.querySelectorAll(".pre-visit").forEach(node => {
+			node.classList.remove("pre-visit")
+		})
+		document.querySelectorAll(".visit").forEach(node => {
+			node.classList.remove("visit")
+		})
+		document.querySelectorAll(".post-visit").forEach(node => {
+			node.classList.remove("post-visit")
+		})
+	}
+
 	//TODO
-	const inOrderTraversal = () => {}
-	//TODO
-	const postOrderTraversal = () => {}
+	const traverse = queue => {
+		const prev = document.querySelector(".visit")
+		if (prev !== null) {
+			prev.classList.remove("visit")
+			prev.classList.add("post-visit")
+		}
+
+		if (queue.length === 0) {
+			setTimeout(unHighlightAllNodes, ANIMATION_TIMEOUT)
+			return
+		}
+
+		let node = queue.shift()
+
+		if (traverseMode === "pre-order") {
+			if (
+				typeof node.children !== "undefined" &&
+				node.children.length === 2
+			) {
+				queue.unshift(node.children[1])
+				highlightPreVisitedNode(node.children[1].id)
+			}
+			if (
+				typeof node.children !== "undefined" &&
+				node.children.length > 0
+			) {
+				queue.unshift(node.children[0])
+				highlightPreVisitedNode(node.children[0].id)
+			}
+
+			//visit node
+			console.log("visiting node: " + node.value)
+			highlightVisitedNode(node.id)
+		} else if (traverseMode === "in-order") {
+			if (
+				typeof node.children !== "undefined" &&
+				node.children.length === 2
+			) {
+				queue.unshift(node.children[1])
+				highlightPreVisitedNode(node.children[1].id)
+			}
+
+			if (
+				typeof node.children !== "undefined" &&
+				node.children.length > 0
+			) {
+				//queue node for later
+				queue.unshift({
+					id: node.id,
+					value: node.value,
+					leftOffset: node.leftOffset,
+					topOffset: node.topOffset,
+					children: [],
+				})
+				highlightPreVisitedNode(node.id)
+
+				//queue left subtree with higher priority
+				queue.unshift(node.children[0])
+				highlightPreVisitedNode(node.children[0].id)
+			} else {
+				//visit node
+				console.log("visiting node: " + node.value)
+				highlightVisitedNode(node.id)
+			}
+		} else if (traverseMode === "post-order") {
+			if (
+				typeof node.children !== "undefined" &&
+				node.children.length > 0
+			) {
+				//queue node for later
+				queue.unshift({
+					id: node.id,
+					value: node.value,
+					leftOffset: node.leftOffset,
+					topOffset: node.topOffset,
+					children: [],
+				})
+				highlightPreVisitedNode(node.id)
+
+				if (
+					typeof node.children !== "undefined" &&
+					node.children.length === 2
+				) {
+					// queue right subtree before node if applicable
+					queue.unshift(node.children[1])
+					highlightPreVisitedNode(node.children[1].id)
+				}
+				//queue left subtree with higher priority
+				queue.unshift(node.children[0])
+				highlightPreVisitedNode(node.children[0].id)
+			} else {
+				//visit node
+				console.log("visiting node: " + node.value)
+				highlightVisitedNode(node.id)
+			}
+		} else {
+			console.error("Invalid traverseMode: " + traverseMode)
+		}
+
+		//trigger recursion
+		setTimeout(() => {
+			traverse(queue)
+		}, ANIMATION_TIMEOUT)
+	}
 
 	const handleTraverseModeChange = e => {
 		setTraverseMode(e.target.value)
@@ -21,10 +147,7 @@ const TopBar = props => {
 	}
 
 	const handleTraverseClick = e => {
-		if (traverseMode === "pre-order") preOrderTraversal()
-		else if (traverseMode === "in-order") inOrderTraversal()
-		else if (traverseMode === "post-order") postOrderTraversal()
-		else console.error("Invalid traverseMode: " + traverseMode)
+		traverse(props.nodes)
 	}
 
 	const handleInputChange = e => {
