@@ -1,70 +1,82 @@
-# Getting Started with Create React App
+# Tree visualizer
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## Purpose
 
-## Available Scripts
+A tool to help build understanding of tree data structures using interactive visuals.
+
+## Features
+
+### Tree operations
+
+This project currently supports [AVL trees](https://en.wikipedia.org/wiki/AVL_tree), [binary trees](https://en.wikipedia.org/wiki/Binary_tree), [binary search trees](https://en.wikipedia.org/wiki/Binary_search_tree), [custom trees](<https://en.wikipedia.org/wiki/Tree_(data_structure)>), which can be creatued by inserting nodes:\
+![Insertion into a binary search tree][bst-insert]
+
+Inserted nodes will automatically conform to whichever tree format you have selected in the bar at the top. To change tree formats, just click and pick another one:\
+![Changing the format of the tree][switch-formats]
+
+Note: duplicate values are fine in binary and custom trees, but they will cause problems in AVL or binary search trees.
+
+Delete nodes in any type of tree by clicking on them:\
+![Deleting nodes][delete]
+
+Note: this will also delete any child nodes.
+
+AVL trees restructure/[self-balance](https://en.wikipedia.org/wiki/Self-balancing_binary_search_tree) themselves to stick with their format. This is done through rotations, and happens automatically when you try to insert a node that would cause the tree to be out of balance:\
+![AVL tree self-balancing][self-balance]
+
+Nodes can be repositioned by dragging them around the page:\
+![Nodes being dragged around][moving-nodes]
+
+Trees can be customized in the 'custom' tree format. Click on lines to remove a relationship between nodes, or drag the handle of a node onto another node to form a new relationship between them:\
+![Nodes in a custom tree being reordered][custom-reorder]
+
+Doing one of these operations will automatically switch the tree format to 'custom.'
+
+### Traversal visualizations
+
+Traversals of any format of tree (including your very own custom format!) can be visualized in the usual three orders. Simply select a traversal order from the dropdown menu and click 'Traverse':
+
+-   Pre-order
+    -   ![Pre-order traversal][pre-order]
+-   In-order
+    -   ![In-order traversal][in-order]
+-   Post-order
+    -   ![Post-order traversal][post-order]
+
+## Setup
+
+This project was created using [Node.js](https://nodejs.org/en/), [React.js](https://reactjs.org/), [Create React App](https://github.com/facebook/create-react-app), and [Jest](https://jestjs.io/).
+
+To begin, ensure you have [Node.js](https://nodejs.org/en/) and [npm](https://www.npmjs.com/) installed on your local machine.
+[Clone](https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository) the repository (or [download](https://github.com/turtle77777777/tree-visualizer/archive/refs/heads/main.zip) the code) and run:
+
+```
+npm install
+```
+
+in the project directory.\
+That's it! You're ready to start the app as soon as `npm` is finished.
+
+## Starting the app
 
 In the project directory, you can run:
 
-### `npm start`
+```
+npm start
+```
 
-Runs the app in the development mode.\
+This starts the app in the development mode.\
 Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
 
 The page will reload when you make changes.\
 You may also see any lint errors in the console.
 
-### `npm test`
-
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
-
-### `npm run build`
-
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
-
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+[bst-insert]: "https://github.com/turtle77777777/tree-visualizer/blob/main/public/bst-insert.gif"
+[switch-formats]: "https://github.com/turtle77777777/tree-visualizer/blob/main/public/switch-formats.gif"
+[delete]: "https://github.com/turtle77777777/tree-visualizer/blob/main/public/delete.gif"
+[self-balance]: "https://github.com/turtle77777777/tree-visualizer/blob/main/public/self-balance.gif"
+[moving-nodes]: "https://github.com/turtle77777777/tree-visualizer/blob/main/public/moving-nodes.gif"
+[custom-reorder]: "https://github.com/turtle77777777/tree-visualizer/blob/main/public/custom-reorder.gif"
+[pre-order]: "https://github.com/turtle77777777/tree-visualizer/blob/main/public/pre-order.gif"
+[in-order]: "https://github.com/turtle77777777/tree-visualizer/blob/main/public/in-order.gif"
+[post-order]: "https://github.com/turtle77777777/tree-visualizer/blob/main/public/post-order.gif"
