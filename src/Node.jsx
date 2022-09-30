@@ -13,20 +13,49 @@ const Node = props => {
 			let newChild, newParent
 			if (item.type === DragTypes.BOTTOM_HANDLE) {
 				// bottom handle to top handle
-				newChild = props.stateData.nodes.reduce((rsf, node) => (rsf !== null ? rsf : Utils.searchTreeForID(node, props.for.id)), null)
-				newParent = props.stateData.nodes.reduce((rsf, node) => (rsf !== null ? rsf : Utils.searchTreeForID(node, item.forID)), null)
+				newChild = props.stateData.nodes.reduce(
+					(rsf, node) =>
+						rsf !== null
+							? rsf
+							: Utils.searchTreeForID(node, props.for.id),
+					null
+				)
+				newParent = props.stateData.nodes.reduce(
+					(rsf, node) =>
+						rsf !== null
+							? rsf
+							: Utils.searchTreeForID(node, item.forID),
+					null
+				)
 				props.stateData.setLineInProgress()
 			} else if (item.type === DragTypes.TOP_HANDLE) {
 				// top handle to bottom handle
-				newChild = props.stateData.nodes.reduce((rsf, node) => (rsf !== null ? rsf : Utils.searchTreeForID(node, item.forID)), null)
-				newParent = props.stateData.nodes.reduce((rsf, node) => (rsf !== null ? rsf : Utils.searchTreeForID(node, props.for.id)), null)
+				newChild = props.stateData.nodes.reduce(
+					(rsf, node) =>
+						rsf !== null
+							? rsf
+							: Utils.searchTreeForID(node, item.forID),
+					null
+				)
+				newParent = props.stateData.nodes.reduce(
+					(rsf, node) =>
+						rsf !== null
+							? rsf
+							: Utils.searchTreeForID(node, props.for.id),
+					null
+				)
 			}
 
 			newChild.parentID = item.forID
 			newParent.children.push(newChild)
 
-			props.stateData.setNodes(props.stateData.nodes.filter(node => node.id !== newChild.id))
-			props.stateData.setLines([...props.stateData.lines, { parentID: newParent.id, childID: newChild.id }])
+			props.stateData.setNodes(
+				props.stateData.nodes.filter(node => node.id !== newChild.id)
+			)
+			props.stateData.setLines([
+				...props.stateData.lines,
+				{ parentID: newParent.id, childID: newChild.id },
+			])
 			props.stateData.setLineInProgress()
 		},
 		canDrop: item => {
@@ -39,7 +68,8 @@ const Node = props => {
 
 			if (wouldFormLoop) return false
 			else if (bottomHandle && !hasParent) return true
-			else if (topHandle && (customMode || lessThanTwoChildren)) return true
+			else if (topHandle && (customMode || lessThanTwoChildren))
+				return true
 			else return false
 		},
 	}))
@@ -53,12 +83,22 @@ const Node = props => {
 	const handleHandleDrag = e => {
 		// This if statement filters out the last drag event which has coordinates (0, 0)
 		if (!(e.clientX === 0 && e.clientY === 0)) {
-			const treeViewBox = document.getElementById("treeView").getBoundingClientRect()
+			const treeViewBox = document
+				.getElementById("treeView")
+				.getBoundingClientRect()
 
 			props.stateData.setLineInProgress({
 				src: props.for,
-				mouseX: Utils.dimensionClamp(e.pageX, treeViewBox.left, treeViewBox.right),
-				mouseY: Utils.dimensionClamp(e.pageY - 25, treeViewBox.top, treeViewBox.bottom),
+				mouseX: Utils.dimensionClamp(
+					e.pageX,
+					treeViewBox.left,
+					treeViewBox.right
+				),
+				mouseY: Utils.dimensionClamp(
+					e.pageY - 25,
+					treeViewBox.top,
+					treeViewBox.bottom
+				),
 			})
 		}
 	}
@@ -68,11 +108,23 @@ const Node = props => {
 	}
 
 	return (
-		<>
-			<div id={props.for.id} className={"node"} style={{ top: props.for.topOffset, left: props.for.leftOffset }}>
-				<Handle for={props.for} side="top" onDrag={handleHandleDrag} onDragEnd={handleHandleDragEnd} />
+		<React.Fragment key={props.for.id + "fragment"}>
+			<div
+				id={props.for.id}
+				className={"node"}
+				style={{ top: props.for.topOffset, left: props.for.leftOffset }}
+			>
+				<Handle
+					for={props.for}
+					side="top"
+					onDrag={handleHandleDrag}
+					onDragEnd={handleHandleDragEnd}
+				/>
 
-				<div ref={dropRef} style={{ position: "relative", top: "-16px" }}>
+				<div
+					ref={dropRef}
+					style={{ position: "relative", top: "-16px" }}
+				>
 					<p
 						className={"nodeText row" + props.row}
 						draggable="true"
@@ -87,7 +139,12 @@ const Node = props => {
 					</p>
 				</div>
 
-				<Handle for={props.for} side="bottom" onDrag={handleHandleDrag} onDragEnd={handleHandleDragEnd} />
+				<Handle
+					for={props.for}
+					side="bottom"
+					onDrag={handleHandleDrag}
+					onDragEnd={handleHandleDragEnd}
+				/>
 			</div>
 
 			{props.for.children.map(value => (
@@ -98,23 +155,41 @@ const Node = props => {
 					onDragEnd={props.onDragEnd}
 					for={value}
 					row={props.row + 1}
-					key={value.id}
+					key={value.id + "childnode"}
 					viewMode={props.viewMode}
 					stateData={props.stateData}
 				/>
 			))}
-		</>
+		</React.Fragment>
 	)
 }
 
 const Handle = props => {
 	const [, dragRef, preview] = useDrag(() => ({
-		type: props.side === "top" ? DragTypes.TOP_HANDLE : DragTypes.BOTTOM_HANDLE,
-		item: { type: props.side === "top" ? DragTypes.TOP_HANDLE : DragTypes.BOTTOM_HANDLE, forID: props.for.id },
+		type:
+			props.side === "top"
+				? DragTypes.TOP_HANDLE
+				: DragTypes.BOTTOM_HANDLE,
+		item: {
+			type:
+				props.side === "top"
+					? DragTypes.TOP_HANDLE
+					: DragTypes.BOTTOM_HANDLE,
+			forID: props.for.id,
+		},
 	}))
 	const [, dragRef2, preview2] = useDrag(() => ({
-		type: props.side === "top" ? DragTypes.TOP_HANDLE : DragTypes.BOTTOM_HANDLE,
-		item: { type: props.side === "top" ? DragTypes.TOP_HANDLE : DragTypes.BOTTOM_HANDLE, forID: props.for.id },
+		type:
+			props.side === "top"
+				? DragTypes.TOP_HANDLE
+				: DragTypes.BOTTOM_HANDLE,
+		item: {
+			type:
+				props.side === "top"
+					? DragTypes.TOP_HANDLE
+					: DragTypes.BOTTOM_HANDLE,
+			forID: props.for.id,
+		},
 	}))
 
 	// Clear drag preview images
@@ -129,7 +204,13 @@ const Handle = props => {
 			<div style={{ position: "relative", height: "16px", top: "-12px" }}>
 				{props.for.parentID === null && (
 					<div className="handle top">
-						<div className="handle" ref={dragRef} draggable onDrag={props.onDrag} onDragEnd={props.onDragEnd} />
+						<div
+							className="handle"
+							ref={dragRef}
+							draggable
+							onDrag={props.onDrag}
+							onDragEnd={props.onDragEnd}
+						/>
 					</div>
 				)}
 			</div>
@@ -138,29 +219,57 @@ const Handle = props => {
 
 	const createBottomHandles = () => {
 		return (
-			<div style={{ display: "flex", position: "relative", height: "16px", top: "-20px" }}>
-				{(props.viewMode === "custom" || props.for.children.length === 1) && (
+			<div
+				style={{
+					display: "flex",
+					position: "relative",
+					height: "16px",
+					top: "-20px",
+				}}
+			>
+				{(props.viewMode === "custom" ||
+					props.for.children.length === 1) && (
 					<div className="handle bottom">
-						<div className="handle" ref={dragRef} draggable onDrag={props.onDrag} onDragEnd={props.onDragEnd} />
+						<div
+							className="handle"
+							ref={dragRef}
+							draggable
+							onDrag={props.onDrag}
+							onDragEnd={props.onDragEnd}
+						/>
 					</div>
 				)}
-				{props.viewMode !== "custom" && props.for.children.length === 0 && (
-					<>
-						<div className="handle bottom">
-							<div className="handle" ref={dragRef} draggable onDrag={props.onDrag} onDragEnd={props.onDragEnd} />
-						</div>
-						<div className="handle bottom">
-							<div className="handle" ref={dragRef2} draggable onDrag={props.onDrag} onDragEnd={props.onDragEnd} />
-						</div>
-					</>
-				)}
+				{props.viewMode !== "custom" &&
+					props.for.children.length === 0 && (
+						<>
+							<div className="handle bottom">
+								<div
+									className="handle"
+									ref={dragRef}
+									draggable
+									onDrag={props.onDrag}
+									onDragEnd={props.onDragEnd}
+								/>
+							</div>
+							<div className="handle bottom">
+								<div
+									className="handle"
+									ref={dragRef2}
+									draggable
+									onDrag={props.onDrag}
+									onDragEnd={props.onDragEnd}
+								/>
+							</div>
+						</>
+					)}
 			</div>
 		)
 	}
 	return (
 		<>
 			{props.side === "top" && createTopHandle(props.handleHandleClick)}
-			{props.side === "bottom" && createBottomHandles(props.onHandleClick)}
+			{props.side === "bottom" &&
+				createBottomHandles(props.onHandleClick)}
 		</>
 	)
 }

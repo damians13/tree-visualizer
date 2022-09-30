@@ -32,8 +32,12 @@ const TopBar = props => {
 		})
 	}
 
-	//TODO
-	const traverse = queue => {
+	const traverse = _queue => {
+		// Since we will be modifying queue with shift() and unshift(),
+		// we need to copy its contents by value so we don't break anything
+		// outside of this function
+		let queue = JSON.parse(JSON.stringify(_queue))
+
 		const prev = document.querySelector(".visit")
 		if (prev !== null) {
 			prev.classList.remove("visit")
@@ -62,9 +66,7 @@ const TopBar = props => {
 				queue.unshift(node.children[0])
 				highlightPreVisitedNode(node.children[0].id)
 			}
-
 			//visit node
-			console.log("visiting node: " + node.value)
 			highlightVisitedNode(node.id)
 		} else if (traverseMode === "in-order") {
 			if (
@@ -94,7 +96,6 @@ const TopBar = props => {
 				highlightPreVisitedNode(node.children[0].id)
 			} else {
 				//visit node
-				console.log("visiting node: " + node.value)
 				highlightVisitedNode(node.id)
 			}
 		} else if (traverseMode === "post-order") {
@@ -125,7 +126,6 @@ const TopBar = props => {
 				highlightPreVisitedNode(node.children[0].id)
 			} else {
 				//visit node
-				console.log("visiting node: " + node.value)
 				highlightVisitedNode(node.id)
 			}
 		} else {
@@ -199,7 +199,6 @@ const TopBar = props => {
 
 			props.setNodes([newNode])
 		} else {
-			// This function updates nodes and has a callback to setLines, so there is no need to call setNodes
 			const newNode = Utils.binaryInsert(props.nodes[0], value)
 
 			props.setNodes([newNode])

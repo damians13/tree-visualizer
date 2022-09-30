@@ -118,7 +118,7 @@ const Tree = props => {
 						onDragEnd={handleDragEnd}
 						for={value}
 						row={1}
-						key={value.id + seed}
+						key={value.id + "#" + seed}
 						viewMode={props.viewMode}
 						stateData={{
 							nodes: props.nodes,
@@ -160,7 +160,11 @@ const Tree = props => {
 								/>
 							)
 						}
-						return <></>
+						return (
+							<React.Fragment
+								key={l.parentID + "-" + l.childID + ":fragment"}
+							></React.Fragment>
+						)
 					})}
 
 					{lineInProgress !== undefined && (
