@@ -72,7 +72,9 @@ export const flattenTree = node => {
  * @returns {Number} the height of the tree from the given node
  */
 export const getTreeHeight = (node, row = 1) => {
-	if (node.children.length === 0) {
+	if (typeof node === "undefined") {
+		return row - 1
+	} else if (node.children.length === 0) {
 		return row
 	} else {
 		return node.children.reduce(
@@ -441,12 +443,12 @@ export const avlBalance = node => {
 	if (node.children.length === 0) {
 		return node
 	} else if (node.children.length === 1) {
+		let nodeClone = JSON.parse(JSON.stringify(node))
 		// Balance the subtree
-		const balancedChild = avlBalance(node.children[0])
+		//const balancedChild = avlBalance(nodeClone.children[0])
+		const balancedChild = nodeClone.children[0]
 		// Perform rotation if necessary
 		if (getTreeHeight(balancedChild) > 1) {
-			const nodeClone = JSON.parse(JSON.stringify(node))
-
 			balancedChild.parentID = node.parentID
 			nodeClone.children = []
 			// Branch right
@@ -500,20 +502,29 @@ export const avlBalance = node => {
 		}
 		// No rotation needed
 		else {
-			return node
+			return nodeClone
 		}
 	} else if (node.children.length === 2) {
-		// Balance each subtree
-		const balancedLeftChild = avlBalance(node.children[0])
-		const balancedRightChild = avlBalance(node.children[1])
 		const nodeClone = JSON.parse(JSON.stringify(node))
 
+		// Balance each subtree
+		const balancedLeftChild = avlBalance(nodeClone.children[0])
+		const balancedRightChild = avlBalance(nodeClone.children[1])
+
+		let leftHeight, rightHeight
+		if (typeof balancedLeftChild === "undefined") {
+			leftHeight = 0
+		} else {
+			leftHeight = getTreeHeight(balancedLeftChild)
+		}
+		if (typeof balancedRightChild === "undefined") {
+			rightHeight = 0
+		} else {
+			rightHeight = getTreeHeight(balancedRightChild)
+		}
+
 		// Left heavy
-		if (
-			getTreeHeight(balancedLeftChild) -
-				getTreeHeight(balancedRightChild) >
-			1
-		) {
+		if (leftHeight - rightHeight > 1) {
 			balancedLeftChild.parentID = node.parentID
 			nodeClone.children = nodeClone.children.filter(
 				child => child.id !== balancedLeftChild.id
@@ -524,11 +535,7 @@ export const avlBalance = node => {
 			)
 		}
 		// Right heavy
-		else if (
-			getTreeHeight(balancedRightChild) -
-				getTreeHeight(balancedLeftChild) >
-			1
-		) {
+		else if (rightHeight - leftHeight > 1) {
 			balancedRightChild.parentID = node.parentID
 			nodeClone.children = nodeClone.children.filter(
 				child => child.id !== balancedRightChild.id
