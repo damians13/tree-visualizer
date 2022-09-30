@@ -71,12 +71,12 @@ Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
 The page will reload when you make changes.\
 You may also see any lint errors in the console.
 
-[bst-insert]: "https://github.com/turtle77777777/tree-visualizer/blob/main/public/bst-insert.gif"
-[switch-formats]: "https://github.com/turtle77777777/tree-visualizer/blob/main/public/switch-formats.gif"
-[delete]: "https://github.com/turtle77777777/tree-visualizer/blob/main/public/delete.gif"
-[self-balance]: "https://github.com/turtle77777777/tree-visualizer/blob/main/public/self-balance.gif"
-[moving-nodes]: "https://github.com/turtle77777777/tree-visualizer/blob/main/public/moving-nodes.gif"
-[custom-reorder]: "https://github.com/turtle77777777/tree-visualizer/blob/main/public/custom-reorder.gif"
-[pre-order]: "https://github.com/turtle77777777/tree-visualizer/blob/main/public/pre-order.gif"
-[in-order]: "https://github.com/turtle77777777/tree-visualizer/blob/main/public/in-order.gif"
-[post-order]: "https://github.com/turtle77777777/tree-visualizer/blob/main/public/post-order.gif"
+[bst-insert]: "https://github.com/turtle77777777/tree-visualizer/blob/main/public/bst-insert.gif?raw=true"
+[switch-formats]: "https://github.com/turtle77777777/tree-visualizer/blob/main/public/switch-formats.gif?raw=true"
+[delete]: "https://github.com/turtle77777777/tree-visualizer/blob/main/public/delete.gif?raw=true"
+[self-balance]: "https://github.com/turtle77777777/tree-visualizer/blob/main/public/self-balance.gif?raw=true"
+[moving-nodes]: "https://github.com/turtle77777777/tree-visualizer/blob/main/public/moving-nodes.gif?raw=true"
+[custom-reorder]: "https://github.com/turtle77777777/tree-visualizer/blob/main/public/custom-reorder.gif?raw=true"
+[pre-order]: "https://github.com/turtle77777777/tree-visualizer/blob/main/public/pre-order.gif?raw=true"
+[in-order]: "https://github.com/turtle77777777/tree-visualizer/blob/main/public/in-order.gif?raw=true"
+[post-order]: "https://github.com/turtle77777777/tree-visualizer/blob/main/public/post-order.gif?raw=true"
