@@ -1,10 +1,10 @@
 self.__precacheManifest = [
   {
-    "revision": "ed909c439a952e1b6088",
-    "url": "/tree-visualizer/static/css/main.7cfae55f.chunk.css"
+    "revision": "fc2a7cfbe8c619c597bf",
+    "url": "/tree-visualizer/static/css/main.5eb56039.chunk.css"
   },
   {
-    "revision": "ed909c439a952e1b6088",
+    "revision": "fc2a7cfbe8c619c597bf",
     "url": "/tree-visualizer/static/js/main.d61a80e8.chunk.js"
   },
   {
@@ -20,7 +20,7 @@ self.__precacheManifest = [
     "url": "/tree-visualizer/static/media/Ubuntu-Regular.84ea7c5c.ttf"
   },
   {
-    "revision": "8d75d98c08aa8e2d92ada0e1324e84a6",
+    "revision": "dcbff9d9d66a771d398c91fa2a7a9230",
     "url": "/tree-visualizer/index.html"
   }
 ];
