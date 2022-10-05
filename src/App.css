@@ -136,10 +136,10 @@ a:hover {
 	background-color: var(--fg-colour-);
 	box-shadow: 2px 2px 5px var(--dark-shadow),
 		-2px -2px 5px var(--light-shadow);
-	opacity: 50%;
+	opacity: 0.5;
 }
 .handle:hover {
-	opacity: 100%;
+	opacity: 1;
 }
 .handle:active {
 	background-color: transparent;
@@ -161,14 +161,14 @@ a:hover {
 	stroke: var(--fg-colour-);
 	stroke-width: 8;
 	transition: all 0.15s ease-out;
-	opacity: 50%;
+	opacity: 0.5;
 }
 .line:hover {
-	opacity: 75%;
+	opacity: 0.75;
 }
 .line.inProgress,
 .line:active {
-	opacity: 100%;
+	opacity: 1;
 }
 
 .nodeText {
