@@ -36,11 +36,11 @@ Doing one of these operations will automatically switch the tree format to 'cust
 
 Traversals of any format of tree (including your very own custom format!) can be visualized in the usual three orders. Simply select a traversal order from the dropdown menu and click 'Traverse':
 
--   Pre-order
+-   Pre-order\
     ![Pre-order traversal][pre-order]
--   In-order
+-   In-order\
     ![In-order traversal][in-order]
--   Post-order
+-   Post-order\
     ![Post-order traversal][post-order]
 
 ## Setup
