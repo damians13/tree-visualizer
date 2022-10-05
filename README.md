@@ -1,5 +1,7 @@
 # Tree visualizer
 
+See it in action on GitHub Pages: https://turtle77777777.github.io/tree-visualizer/
+
 ## Purpose
 
 A tool to help build understanding of tree data structures using interactive visuals.
