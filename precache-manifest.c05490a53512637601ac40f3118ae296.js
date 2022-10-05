@@ -20,7 +20,7 @@ self.__precacheManifest = [
     "url": "/tree-visualizer/static/media/Ubuntu-Regular.84ea7c5c.ttf"
   },
   {
-    "revision": "e63aa03156de54d8c1acd85019c815ba",
+    "revision": "8d75d98c08aa8e2d92ada0e1324e84a6",
     "url": "/tree-visualizer/index.html"
   }
 ];
