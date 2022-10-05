@@ -10,6 +10,11 @@
 	--post-visit: #4b4a7a;
 }
 
+@font-face {
+	font-family: Ubuntu;
+	src: url(../src/font/Ubuntu-Regular.ttf) format("truetype");
+}
+
 html,
 body {
 	overflow: hidden;
