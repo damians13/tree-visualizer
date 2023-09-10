@@ -1,6 +1,6 @@
 # Tree visualizer
 
-See it in action on GitHub Pages: https://turtle77777777.github.io/tree-visualizer/
+See it in action on GitHub Pages: https://damians13.github.io/tree-visualizer/
 
 ## Purpose
 
